@@ -10,4 +10,7 @@
   - Create proxmox template from MicroOS image
     - https://pve.proxmox.com/wiki/Cloud-Init_Support
     - https://austinsnerdythings.com/2021/08/30/how-to-create-a-proxmox-ubuntu-cloud-init-image
-  
+
+# Install talos
+- https://www.talos.dev/v1.6/talos-guides/install/virtualized-platforms/proxmox/
+- https://www.talos.dev/v1.6/talos-guides/network/vip/
