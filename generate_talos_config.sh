@@ -1,0 +1,1 @@
+talosctl gen config test-cluster https://172.20.0.1:6443 --config-patch-control-plane @controlplane_patch.yaml
