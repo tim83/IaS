@@ -1,1 +1,5 @@
-talosctl gen config test-cluster https://172.20.0.1:6443 --config-patch-control-plane @controlplane_patch.yaml
+talosctl gen config talos-proxmox-cluster https://192.168.178.80:6443 \
+    --force \
+    --output-dir talos/config \
+    --config-patch @talos/patch/all.yaml \
+    --config-patch-control-plane @talos/patch/controlplane.yaml
