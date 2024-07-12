@@ -5,7 +5,11 @@ variable "proxmox_pve_node_name" {
 
 variable "proxmox_pve_node_address" {
   type = string
-  default= "https://proxmox.mees.vip/api2/json"
+  default= "https://192.168.20.1:8006/api2/json"
+}
+
+variable "proxmox_pve_api_token" {
+  type = string
 }
 
 # see https://github.com/siderolabs/talos/releases

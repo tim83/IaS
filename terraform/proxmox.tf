@@ -1,11 +1,10 @@
 # see https://registry.terraform.io/providers/bpg/proxmox/0.60.0/docs/resources/virtual_environment_file
-resource "proxmox_virtual_environment_file" "talos" {
+resource "proxmox_virtual_environment_download_file" "talos" {
   datastore_id = "local"
   node_name    = "pve"
   content_type = "iso"
 
   url = "https://github.com/siderolabs/talos/releases/download/v${var.talos_version}/metal-amd64.iso"
-  file_name    = "talos-v${var.talos_version}.iso"
 }
 
 # see https://registry.terraform.io/providers/bpg/proxmox/0.60.0/docs/resources/virtual_environment_vm
@@ -50,7 +49,7 @@ resource "proxmox_virtual_environment_vm" "controller" {
     discard      = "on"
     size         = 40
     file_format  = "raw"
-    file_id      = proxmox_virtual_environment_file.talos.id
+    file_id      = proxmox_virtual_environment_download_file.talos.id
   }
   agent {
     enabled = true
@@ -108,7 +107,7 @@ resource "proxmox_virtual_environment_vm" "worker" {
     discard      = "on"
     size         = 40
     file_format  = "raw"
-    file_id      = proxmox_virtual_environment_file.talos.id
+    file_id      = proxmox_virtual_environment_download_file.talos.id
   }
   disk {
     datastore_id = "local-lvm"

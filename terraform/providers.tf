@@ -2,12 +2,6 @@
 terraform {
   required_version = "1.9.2"
   required_providers {
-    # see https://registry.terraform.io/providers/hashicorp/random
-    # see https://github.com/hashicorp/terraform-provider-random
-    random = {
-      source  = "hashicorp/random"
-      version = "3.6.2"
-    }
     # see https://registry.terraform.io/providers/hashicorp/cloudinit
     # see https://github.com/hashicorp/terraform-provider-cloudinit
     cloudinit = {
@@ -18,7 +12,7 @@ terraform {
     # see https://github.com/bpg/terraform-provider-proxmox
     proxmox = {
       source  = "bpg/proxmox"
-      version = "0.61.1"
+      version = "0.60.0"
     }
     # see https://registry.terraform.io/providers/siderolabs/talos
     # see https://github.com/siderolabs/terraform-provider-talos
@@ -26,22 +20,18 @@ terraform {
       source  = "siderolabs/talos"
       version = "0.5.0"
     }
-    # see https://registry.terraform.io/providers/hashicorp/helm
-    # see https://github.com/hashicorp/terraform-provider-helm
-    helm = {
-      source  = "hashicorp/helm"
-      version = "2.14.0"
-    }
   }
 }
 
+
 provider "proxmox" {
-  tmp_dir = "tmp"
+  endpoint = var.proxmox_pve_node_address
+  api_token = var.proxmox_pve_api_token
+  insecure = true
+
   ssh {
-    node {
-      name    = var.proxmox_pve_node_name
-      address = var.proxmox_pve_node_address
-    }
+    username = "root"
+    agent = true
   }
 }
 

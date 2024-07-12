@@ -24,46 +24,23 @@ resource "talos_machine_secrets" "talos" {
 // see https://registry.terraform.io/providers/siderolabs/talos/0.5.0/docs/data-sources/machine_configuration
 data "talos_machine_configuration" "controller" {
   cluster_name       = var.cluster_name
-  cluster_endpoint   = "${var.cluster_vip}:6443"
+  cluster_endpoint   = "https://${var.cluster_vip}:6443"
   machine_secrets    = talos_machine_secrets.talos.machine_secrets
   machine_type       = "controlplane"
   talos_version      = "v${var.talos_version}"
   kubernetes_version = var.kubernetes_version
-  config_patches = [
-    yamlencode(local.common_machine_config),
-    yamlencode({
-      machine = {
-        network = {
-          interfaces = [
-            # see https://www.talos.dev/v1.7/talos-guides/network/vip/
-            {
-              deviceSelector= {
-                busPath= "0*"
-              },
-              vip = {
-                ip = var.cluster_vip
-              }
-            }
-          ]
-        }
-      }
-    }),
-  ]
 }
 
 // see https://registry.terraform.io/providers/siderolabs/talos/0.5.0/docs/data-sources/machine_configuration
 data "talos_machine_configuration" "worker" {
   cluster_name       = var.cluster_name
-  cluster_endpoint   = "${var.cluster_vip}:6443"
+  cluster_endpoint   = "https://${var.cluster_vip}:6443"
   machine_secrets    = talos_machine_secrets.talos.machine_secrets
   machine_type       = "worker"
   talos_version      = "v${var.talos_version}"
   kubernetes_version = var.kubernetes_version
   examples           = false
   docs               = false
-  config_patches = [
-    yamlencode(local.common_machine_config),
-  ]
 }
 
 // see https://registry.terraform.io/providers/siderolabs/talos/0.5.0/docs/data-sources/client_configuration
@@ -91,6 +68,24 @@ resource "talos_machine_configuration_apply" "controller" {
   endpoint                    = local.controller_nodes[count.index].address
   node                        = local.controller_nodes[count.index].address
   config_patches = [
+    yamlencode(local.common_machine_config),
+    yamlencode({
+      machine = {
+        network = {
+          interfaces = [
+            # see https://www.talos.dev/v1.7/talos-guides/network/vip/
+            {
+              deviceSelector= {
+                busPath= "0*"
+              },
+              vip = {
+                ip = var.cluster_vip
+              }
+            }
+          ]
+        }
+      }
+    }),
     yamlencode({
       machine = {
         network = {
@@ -112,6 +107,7 @@ resource "talos_machine_configuration_apply" "worker" {
   endpoint                    = local.worker_nodes[count.index].address
   node                        = local.worker_nodes[count.index].address
   config_patches = [
+    yamlencode(local.common_machine_config),
     yamlencode({
       machine = {
         network = {
