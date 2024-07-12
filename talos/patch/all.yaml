@@ -1,7 +1,0 @@
-cluster:
-    allowSchedulingOnControlPlanes: true
-    controlPlane:
-        endpoint: https://192.168.178.95:6443
-    clusterName: talos-home
-    network:
-        dnsDomain: cluster.local # The domain used by Kubernetes DNS.
