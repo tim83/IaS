@@ -4,8 +4,8 @@ variable "proxmox_pve_node_name" {
 }
 
 variable "proxmox_pve_node_address" {
-  type = string
-  default= "https://192.168.20.1:8006/api2/json"
+  type    = string
+  default = "https://192.168.20.1:8006/api2/json"
 }
 
 variable "proxmox_pve_api_token" {
@@ -25,7 +25,7 @@ variable "talos_version" {
 }
 
 variable "talos_factory_id" {
-  type = string
+  type    = string
   default = "ce4c980550dd2ab1b17bbf2b08801c7eb59418eafe8f279833297925d67c7515"
 }
 

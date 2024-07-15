@@ -4,7 +4,7 @@ resource "proxmox_virtual_environment_download_file" "talos" {
   node_name    = "pve"
   content_type = "iso"
 
-  url = "https://factory.talos.dev/image/${var.talos_factory_id}/v${var.talos_version}/nocloud-amd64.iso"
+  url       = "https://factory.talos.dev/image/${var.talos_factory_id}/v${var.talos_version}/nocloud-amd64.iso"
   file_name = "talos-v${var.talos_version}-nocloud-amd64-${var.talos_factory_id}.iso"
 }
 
@@ -31,7 +31,7 @@ resource "proxmox_virtual_environment_vm" "controller" {
     type = "qxl"
   }
   network_device {
-    bridge = "vmbr0"
+    bridge   = "vmbr0"
     firewall = true
   }
   tpm_state {
@@ -39,7 +39,7 @@ resource "proxmox_virtual_environment_vm" "controller" {
   }
   cdrom {
     enabled = true
-    file_id      = proxmox_virtual_environment_download_file.talos.id
+    file_id = proxmox_virtual_environment_download_file.talos.id
   }
   disk {
     datastore_id = "local-lvm"
@@ -102,7 +102,7 @@ resource "proxmox_virtual_environment_vm" "worker" {
   }
   cdrom {
     enabled = true
-    file_id      = proxmox_virtual_environment_download_file.talos.id
+    file_id = proxmox_virtual_environment_download_file.talos.id
   }
   disk {
     datastore_id = "local-lvm"

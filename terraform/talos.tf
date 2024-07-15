@@ -70,16 +70,16 @@ resource "talos_machine_configuration_apply" "controller" {
         allowSchedulingOnControlPlanes = true,
       },
       machine = {
-        install =  {
-          disk = "/dev/sda"
-          image =  "factory.talos.dev/installer/${var.talos_factory_id}:v${var.talos_version}"
+        install = {
+          disk  = "/dev/sda"
+          image = "factory.talos.dev/installer/${var.talos_factory_id}:v${var.talos_version}"
         }
         network = {
           interfaces = [
             # see https://www.talos.dev/v1.7/talos-guides/network/vip/
             {
-              deviceSelector= {
-                busPath= "0*"
+              deviceSelector = {
+                busPath = "0*"
               },
               vip = {
                 ip = var.cluster_vip
@@ -115,8 +115,8 @@ resource "talos_machine_configuration_apply" "worker" {
   config_patches = [
     yamlencode({
       machine = {
-        install =  {
-          image =  "factory.talos.dev/installer/${var.talos_factory_id}:v${var.talos_version}"
+        install = {
+          image = "factory.talos.dev/installer/${var.talos_factory_id}:v${var.talos_version}"
         }
       }
     })

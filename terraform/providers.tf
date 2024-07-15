@@ -25,13 +25,13 @@ terraform {
 
 
 provider "proxmox" {
-  endpoint = var.proxmox_pve_node_address
+  endpoint  = var.proxmox_pve_node_address
   api_token = var.proxmox_pve_api_token
-  insecure = true
+  insecure  = true
 
   ssh {
     username = "root"
-    agent = true
+    agent    = true
   }
 }
 
