@@ -48,10 +48,10 @@ provider "talos" {
 
 provider "flux" {
   kubernetes = {
-    host                   = data.talos_cluster_kubeconfig.talos.kubernetes_client_configuration.host
-    client_certificate     = data.talos_cluster_kubeconfig.talos.kubernetes_client_configuration.client_certificate
-    client_key             = data.talos_cluster_kubeconfig.talos.kubernetes_client_configuration.client_key
-    cluster_ca_certificate = data.talos_cluster_kubeconfig.talos.kubernetes_client_configuration.ca_certificate
+    host                   = "https://${var.cluster_vip}:6443"
+    client_certificate     = base64decode(data.talos_cluster_kubeconfig.talos.kubernetes_client_configuration.client_certificate)
+    client_key             = base64decode(data.talos_cluster_kubeconfig.talos.kubernetes_client_configuration.client_key)
+    cluster_ca_certificate = base64decode(data.talos_cluster_kubeconfig.talos.kubernetes_client_configuration.ca_certificate)
   }
   git = {
     url = "https://github.com/${var.github_org}/${var.github_repository}.git"
