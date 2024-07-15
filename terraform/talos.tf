@@ -116,6 +116,7 @@ resource "talos_machine_configuration_apply" "worker" {
     yamlencode({
       machine = {
         install = {
+          disk  = "/dev/sda"
           image = "factory.talos.dev/installer/${var.talos_factory_id}:v${var.talos_version}"
         }
       }

@@ -15,7 +15,7 @@ resource "proxmox_virtual_environment_vm" "controller" {
   node_name       = "pve"
   tags            = sort(["talos", "controller", "terraform"])
   stop_on_destroy = true
-  bios            = "seabios"
+  bios            = "ovmf"
   scsi_hardware   = "virtio-scsi-single"
   operating_system {
     type = "l26"
@@ -40,6 +40,11 @@ resource "proxmox_virtual_environment_vm" "controller" {
   cdrom {
     enabled = true
     file_id = proxmox_virtual_environment_download_file.talos.id
+  }
+  efi_disk {
+    datastore_id = "local-lvm"
+    file_format  = "raw"
+    type         = "4m"
   }
   disk {
     datastore_id = "local-lvm"
@@ -90,23 +95,24 @@ resource "proxmox_virtual_environment_vm" "worker" {
     type = "qxl"
   }
   network_device {
-    bridge = "vmbr0"
+    bridge   = "vmbr0"
+    firewall = true
   }
   tpm_state {
     version = "v2.0"
+  }
+  cdrom {
+    enabled = true
+    file_id = proxmox_virtual_environment_download_file.talos.id
   }
   efi_disk {
     datastore_id = "local-lvm"
     file_format  = "raw"
     type         = "4m"
   }
-  cdrom {
-    enabled = true
-    file_id = proxmox_virtual_environment_download_file.talos.id
-  }
   disk {
     datastore_id = "local-lvm"
-    interface    = "virtio0"
+    interface    = "scsi0"
     iothread     = true
     discard      = "on"
     size         = 60
@@ -114,6 +120,7 @@ resource "proxmox_virtual_environment_vm" "worker" {
   }
   agent {
     enabled = true
+    trim    = true
   }
   initialization {
     ip_config {
