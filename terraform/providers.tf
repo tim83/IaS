@@ -20,6 +20,14 @@ terraform {
       source  = "siderolabs/talos"
       version = "0.5.0"
     }
+    flux = {
+      source  = "fluxcd/flux"
+      version = "1.2"
+    }
+    github = {
+      source  = "integrations/github"
+      version = "6.1"
+    }
   }
 }
 
@@ -36,4 +44,25 @@ provider "proxmox" {
 }
 
 provider "talos" {
+}
+
+provider "flux" {
+  kubernetes = {
+    host                   = data.talos_cluster_kubeconfig.talos.kubernetes_client_configuration.host
+    client_certificate     = data.talos_cluster_kubeconfig.talos.kubernetes_client_configuration.client_certificate
+    client_key             = data.talos_cluster_kubeconfig.talos.kubernetes_client_configuration.client_key
+    cluster_ca_certificate = data.talos_cluster_kubeconfig.talos.kubernetes_client_configuration.ca_certificate
+  }
+  git = {
+    url = "https://github.com/${var.github_org}/${var.github_repository}.git"
+    http = {
+      username = "personal-access-token" # This can be any string when using a personal access token
+      password = var.github_token
+    }
+  }
+}
+
+provider "github" {
+  owner = var.github_org
+  token = var.github_token
 }

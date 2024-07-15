@@ -9,7 +9,8 @@ variable "proxmox_pve_node_address" {
 }
 
 variable "proxmox_pve_api_token" {
-  type = string
+  type      = string
+  sensitive = true
 }
 
 # see https://github.com/siderolabs/talos/releases
@@ -106,4 +107,22 @@ variable "worker_count" {
 variable "prefix" {
   type    = string
   default = "talos-home"
+}
+
+variable "github_token" {
+  description = "GitHub token"
+  sensitive   = true
+  type        = string
+}
+
+variable "github_org" {
+  description = "GitHub organization"
+  type        = string
+  default     = "tim83"
+}
+
+variable "github_repository" {
+  description = "GitHub repository"
+  type        = string
+  default     = "fluxcd"
 }
