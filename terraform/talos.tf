@@ -89,13 +89,6 @@ resource "talos_machine_configuration_apply" "controller" {
         }
       }
     }),
-    yamlencode({
-      machine = {
-        network = {
-          hostname = local.controller_nodes[count.index].name
-        }
-      }
-    }),
   ]
   depends_on = [
     proxmox_virtual_environment_vm.controller,

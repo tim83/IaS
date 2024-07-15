@@ -92,7 +92,7 @@ variable "cluster_node_network_load_balancer_last_hostnum" {
 
 variable "controller_count" {
   type    = number
-  default = 3
+  default = 2
   validation {
     condition     = var.controller_count >= 1
     error_message = "Must be 1 or more."
@@ -101,7 +101,7 @@ variable "controller_count" {
 
 variable "worker_count" {
   type    = number
-  default = 2
+  default = 1
 }
 
 variable "prefix" {
