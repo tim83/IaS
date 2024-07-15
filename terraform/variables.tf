@@ -24,6 +24,11 @@ variable "talos_version" {
   }
 }
 
+variable "talos_factory_id" {
+  type = string
+  default = "ce4c980550dd2ab1b17bbf2b08801c7eb59418eafe8f279833297925d67c7515"
+}
+
 # see https://github.com/siderolabs/kubelet/pkgs/container/kubelet
 # see https://www.talos.dev/v1.7/introduction/support-matrix/
 variable "kubernetes_version" {
@@ -95,11 +100,7 @@ variable "controller_count" {
 
 variable "worker_count" {
   type    = number
-  default = 1
-  validation {
-    condition     = var.worker_count >= 1
-    error_message = "Must be 1 or more."
-  }
+  default = 0
 }
 
 variable "prefix" {

@@ -1,19 +1,16 @@
 locals {
   controller_nodes = [
     for i in range(var.controller_count) : {
-      name    = "c${i}"
+      name    = "controller-${i}"
       address = cidrhost(var.cluster_node_network, var.cluster_node_network_first_controller_hostnum + i)
     }
   ]
   worker_nodes = [
     for i in range(var.worker_count) : {
-      name    = "w${i}"
+      name    = "worker-${i}"
       address = cidrhost(var.cluster_node_network, var.cluster_node_network_first_worker_hostnum + i)
     }
   ]
-  common_machine_config = {
-    allowSchedulingOnControlPlanes = true,
-  }
 }
 
 // see https://registry.terraform.io/providers/siderolabs/talos/0.5.0/docs/resources/machine_secrets
@@ -68,9 +65,14 @@ resource "talos_machine_configuration_apply" "controller" {
   endpoint                    = local.controller_nodes[count.index].address
   node                        = local.controller_nodes[count.index].address
   config_patches = [
-    yamlencode(local.common_machine_config),
     yamlencode({
+      cluster = {
+        allowSchedulingOnControlPlanes = true,
+      },
       machine = {
+        # install =  {
+        #   image =  "factory.talos.dev/installer/ce4c980550dd2ab1b17bbf2b08801c7eb59418eafe8f279833297925d67c7515:v${var.talos_version}"
+        # }
         network = {
           interfaces = [
             # see https://www.talos.dev/v1.7/talos-guides/network/vip/
@@ -106,18 +108,17 @@ resource "talos_machine_configuration_apply" "worker" {
   machine_configuration_input = data.talos_machine_configuration.worker.machine_configuration
   endpoint                    = local.worker_nodes[count.index].address
   node                        = local.worker_nodes[count.index].address
-  config_patches = [
-    yamlencode(local.common_machine_config),
-    yamlencode({
-      machine = {
-        network = {
-          hostname = local.worker_nodes[count.index].name
-        }
-      }
-    }),
-  ]
   depends_on = [
     proxmox_virtual_environment_vm.worker,
+  ]
+  config_patches = [
+    yamlencode({
+      machine = {
+        install =  {
+          image =  "factory.talos.dev/installer/${var.talos_factory_id}:v${var.talos_version}"
+        }
+      }
+    })
   ]
 }
 
