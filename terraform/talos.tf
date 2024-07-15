@@ -70,9 +70,10 @@ resource "talos_machine_configuration_apply" "controller" {
         allowSchedulingOnControlPlanes = true,
       },
       machine = {
-        # install =  {
-        #   image =  "factory.talos.dev/installer/ce4c980550dd2ab1b17bbf2b08801c7eb59418eafe8f279833297925d67c7515:v${var.talos_version}"
-        # }
+        install =  {
+          disk = "/dev/sda"
+          image =  "factory.talos.dev/installer/${var.talos_factory_id}:v${var.talos_version}"
+        }
         network = {
           interfaces = [
             # see https://www.talos.dev/v1.7/talos-guides/network/vip/

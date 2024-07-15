@@ -5,6 +5,7 @@ resource "proxmox_virtual_environment_download_file" "talos" {
   content_type = "iso"
 
   url = "https://factory.talos.dev/image/${var.talos_factory_id}/v${var.talos_version}/nocloud-amd64.iso"
+  file_name = "talos-v${var.talos_version}-nocloud-amd64-${var.talos_factory_id}.iso"
 }
 
 # see https://registry.terraform.io/providers/bpg/proxmox/0.60.0/docs/resources/virtual_environment_vm
@@ -14,8 +15,7 @@ resource "proxmox_virtual_environment_vm" "controller" {
   node_name       = "pve"
   tags            = sort(["talos", "controller", "terraform"])
   stop_on_destroy = true
-  bios            = "ovmf"
-  machine         = "q35"
+  bios            = "seabios"
   scsi_hardware   = "virtio-scsi-single"
   operating_system {
     type = "l26"
@@ -32,24 +32,22 @@ resource "proxmox_virtual_environment_vm" "controller" {
   }
   network_device {
     bridge = "vmbr0"
+    firewall = true
   }
   tpm_state {
     version = "v2.0"
   }
-  efi_disk {
-    datastore_id = "local-lvm"
-    file_format  = "raw"
-    type         = "4m"
+  cdrom {
+    enabled = true
+    file_id      = proxmox_virtual_environment_download_file.talos.id
   }
   disk {
     datastore_id = "local-lvm"
     interface    = "scsi0"
     iothread     = true
-    ssd          = true
     discard      = "on"
-    size         = 40
+    size         = 60
     file_format  = "raw"
-    file_id      = proxmox_virtual_environment_download_file.talos.id
   }
   agent {
     enabled = true
@@ -60,6 +58,9 @@ resource "proxmox_virtual_environment_vm" "controller" {
       ipv4 {
         address = "${local.controller_nodes[count.index].address}/16"
         gateway = var.cluster_node_network_gateway
+      }
+      ipv6 {
+        address = "dhcp"
       }
     }
   }
