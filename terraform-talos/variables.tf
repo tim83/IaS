@@ -45,7 +45,7 @@ variable "kubernetes_version" {
 variable "cluster_name" {
   description = "A name to provide for the Talos cluster"
   type        = string
-  default     = "home"
+  default     = "talos-home"
 }
 
 variable "cluster_vip" {
