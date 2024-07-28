@@ -14,10 +14,6 @@ terraform {
       source  = "bpg/proxmox"
       version = "0.61.1"
     }
-    flux = {
-      source  = "fluxcd/flux"
-      version = "1.3"
-    }
     github = {
       source  = "integrations/github"
       version = "6.2"
@@ -34,22 +30,6 @@ provider "proxmox" {
   ssh {
     username = "root"
     agent    = true
-  }
-}
-
-provider "flux" {
-  kubernetes = {
-    host                   = "https://${var.cluster_vip}:6443"
-    client_certificate     = base64decode(data.talos_cluster_kubeconfig.talos.kubernetes_client_configuration.client_certificate)
-    client_key             = base64decode(data.talos_cluster_kubeconfig.talos.kubernetes_client_configuration.client_key)
-    cluster_ca_certificate = base64decode(data.talos_cluster_kubeconfig.talos.kubernetes_client_configuration.ca_certificate)
-  }
-  git = {
-    url = "https://github.com/${var.github_org}/${var.github_repository}.git"
-    http = {
-      username = "personal-access-token" # This can be any string when using a personal access token
-      password = var.github_token
-    }
   }
 }
 

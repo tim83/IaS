@@ -1,10 +1,25 @@
+locals {
+  controller_nodes = [
+    for i in range(var.controller_count) : {
+      name    = "controller-${i}"
+      address = cidrhost(var.cluster_node_network, var.cluster_node_network_first_controller_hostnum + i)
+    }
+  ]
+  worker_nodes = [
+    for i in range(var.worker_count) : {
+      name    = "worker-${i}"
+      address = cidrhost(var.cluster_node_network, var.cluster_node_network_first_worker_hostnum + i)
+    }
+  ]
+}
+
 # see https://registry.terraform.io/providers/bpg/proxmox/0.60.0/docs/resources/virtual_environment_file
 resource "proxmox_virtual_environment_download_file" "microos" {
   datastore_id = "local"
   node_name    = "pve"
   content_type = "iso"
 
-  url       = "https://download.opensuse.org/tumbleweed/appliances/openSUSE-MicroOS.x86_64-OpenStack-Cloud.qcow2"
+  url       = "https://ftp.halifax.rwth-aachen.de/opensuse/tumbleweed/appliances/openSUSE-MicroOS.x86_64-kvm-and-xen.qcow2"
   file_name = "microos-cloudinit.img"
 }
 
@@ -52,12 +67,12 @@ resource "proxmox_virtual_environment_vm" "controller" {
     file_id = proxmox_virtual_environment_download_file.microos.id
   }
   agent {
-    enabled = false
+    enabled = true
     trim    = true
   }
   initialization {
     user_account { 
-      username = kube
+      username = "kube"
     }
     ip_config {
       ipv4 {
@@ -116,12 +131,12 @@ resource "proxmox_virtual_environment_vm" "worker" {
     file_id = proxmox_virtual_environment_download_file.microos.id
   }
   agent {
-    enabled = false
+    enabled = true
     trim    = true
   }
   initialization {
     user_account { 
-      username = kube
+      username = "kube"
     }
     ip_config {
       ipv4 {
