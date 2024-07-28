@@ -24,6 +24,26 @@ provider "registry.terraform.io/bpg/proxmox" {
   ]
 }
 
+provider "registry.terraform.io/deeliciouscode/ignition" {
+  version     = "2.1.8-pre"
+  constraints = "2.1.8-pre"
+  hashes = [
+    "h1:yt9flucqL5C6tHEYKWSJq1+XVpyD+9TDdJ4yjhSzaGo=",
+    "zh:24ebb6e939ea68efa7c5387f95b8f64c1fb5408b4a28f12aa9720f937af6d98d",
+    "zh:59b152c556fe992f46977ff53f7f9bd0b424cbcade64c59ab206be3e1d0c2aa6",
+    "zh:68952a24c71105241569f45e610f16556ce92bc5d3dc0537d75e79d9af404d26",
+    "zh:712fbd70c2ff5b40df5a48d47965f4cfb70200d1f8ae382c9306d6a7780a498f",
+    "zh:7a518350758747441df4f13343a08c870e90d301edd0537e049e599e3d46f6ca",
+    "zh:7b90bb108ec3f4dd4d5291a12207ab2fc8731518f3bb9c2066430bf1bdea72fa",
+    "zh:a12a07472b4463131563e81c093a25c0c96cc43e16af34cc738c6b783d8a3d58",
+    "zh:a7f3fab2b4b2c04b79868bee8d425e5ba94af5d190fdbb9a110245d336011a49",
+    "zh:ab7639a194baaa34ea2264c07ac7620a4bbe71f02826e4078a818e85dd31a4da",
+    "zh:b0260fd5733c5e5964bd62b82a05d8117b6c651f60b64b485f7df8732892fd52",
+    "zh:c8176d8a82fc4e607a90e0a4b3ee747cab2fae1a2fe0452b2c9ea89eb462be7b",
+    "zh:f012c05ea276204421ca5d588f69c054297248e23f8085473ac4fb8311592c19",
+  ]
+}
+
 provider "registry.terraform.io/hashicorp/cloudinit" {
   version     = "2.3.4"
   constraints = "2.3.4"
