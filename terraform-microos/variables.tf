@@ -17,8 +17,8 @@ variable "proxmox_pve_api_token" {
 # see https://www.talos.dev/v1.7/introduction/support-matrix/
 variable "kubernetes_version" {
   type = string
-  # renovate: datasource=github-releases depName=siderolabs/kubelet
-  default = "1.30.2"
+  # renovate: datasource=github-releases depName=k3s-io/k3s
+  default = "1.28"
   validation {
     condition     = can(regex("^\\d+(\\.\\d+)+", var.kubernetes_version))
     error_message = "Must be a version number."
@@ -26,7 +26,7 @@ variable "kubernetes_version" {
 }
 
 variable "cluster_name" {
-  description = "A name to provide for the Talos cluster"
+  description = "A name to provide for the cluster"
   type        = string
   default     = "home"
 }
@@ -69,16 +69,16 @@ variable "cluster_node_network_load_balancer_last_hostnum" {
 
 variable "controller_count" {
   type    = number
-  default = 1
-  validation {
-    condition     = var.controller_count >= 1
-    error_message = "Must be 1 or more."
-  }
+  default = 0
+  # validation {
+  #   condition     = var.controller_count >= 1
+  #   error_message = "Must be 1 or more."
+  # }
 }
 
 variable "worker_count" {
   type    = number
-  default = 1
+  default = 0
 }
 
 variable "prefix" {
@@ -102,4 +102,8 @@ variable "github_repository" {
   description = "GitHub repository"
   type        = string
   default     = "fluxcd"
+}
+
+variable "authorized_ssh_key" {
+  type = string
 }
