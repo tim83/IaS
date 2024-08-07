@@ -13,7 +13,7 @@ resource "kubernetes_secret" "sops-age" {
   }
 
   data = {
-    "age.agekey" = "${file("${path.module}/../../fluxcd/clusters/${var.cluster_name}/age.agekey")}"
+    "age.agekey" = "${file("${path.module}/../../fluxcd/age.agekey")}"
   }
 
   depends_on = [time_sleep.wait_for_cluster_ip]
