@@ -74,27 +74,27 @@ variable "cluster_node_network_load_balancer_last_hostnum" {
 }
 
 variable "node_config" {
-  type    = list(object({
+  type = list(object({
     pve_node_name = string
-    node_type = string
-    count = number
-    cpu_count = number
-    max_ram_gb = number
-}))
+    node_type     = string
+    count         = number
+    cpu_count     = number
+    max_ram_gb    = number
+  }))
   default = [
     {
-      pve_node_name= "pve"
-      node_type= "controller"
-      count= 2
-      cpu_count = 2
-      max_ram_gb= 2
+      pve_node_name = "pve"
+      node_type     = "controller"
+      count         = 2
+      cpu_count     = 2
+      max_ram_gb    = 2
     },
     {
-      pve_node_name =  "pve"
-      node_type =  "worker"
-      count =  1
-      cpu_count =  4
-      max_ram_gb =  4
+      pve_node_name = "pve"
+      node_type     = "worker"
+      count         = 1
+      cpu_count     = 4
+      max_ram_gb    = 4
     },
   ]
 }

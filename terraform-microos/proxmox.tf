@@ -102,7 +102,7 @@ resource "proxmox_virtual_environment_vm" "controller" {
     discard      = "on"
     size         = 60
     file_format  = "raw"
-    file_id = proxmox_virtual_environment_download_file.microos-cloudinit.id
+    file_id      = proxmox_virtual_environment_download_file.microos-cloudinit.id
   }
   agent {
     enabled = true
@@ -164,7 +164,7 @@ resource "proxmox_virtual_environment_vm" "worker" {
     discard      = "on"
     size         = 60
     file_format  = "raw"
-    file_id = proxmox_virtual_environment_download_file.microos-cloudinit.id
+    file_id      = proxmox_virtual_environment_download_file.microos-cloudinit.id
   }
   agent {
     enabled = true

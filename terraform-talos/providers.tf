@@ -29,7 +29,7 @@ terraform {
       version = "6.2"
     }
     kubernetes = {
-      source = "hashicorp/kubernetes"
+      source  = "hashicorp/kubernetes"
       version = "2.31.0"
     }
   }
@@ -72,8 +72,8 @@ provider "github" {
 }
 
 provider "kubernetes" {
-    host                   = data.talos_cluster_kubeconfig.talos.kubernetes_client_configuration.host
-    client_certificate     = base64decode(data.talos_cluster_kubeconfig.talos.kubernetes_client_configuration.client_certificate)
-    client_key             = base64decode(data.talos_cluster_kubeconfig.talos.kubernetes_client_configuration.client_key)
-    cluster_ca_certificate = base64decode(data.talos_cluster_kubeconfig.talos.kubernetes_client_configuration.ca_certificate)
+  host                   = data.talos_cluster_kubeconfig.talos.kubernetes_client_configuration.host
+  client_certificate     = base64decode(data.talos_cluster_kubeconfig.talos.kubernetes_client_configuration.client_certificate)
+  client_key             = base64decode(data.talos_cluster_kubeconfig.talos.kubernetes_client_configuration.client_key)
+  cluster_ca_certificate = base64decode(data.talos_cluster_kubeconfig.talos.kubernetes_client_configuration.ca_certificate)
 }

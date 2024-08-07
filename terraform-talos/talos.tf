@@ -1,10 +1,10 @@
 locals {
   controller_nodes = {
-    for key, node_config in local.all_nodes: key => node_config
+    for key, node_config in local.all_nodes : key => node_config
     if node_config.node_type == "controller"
   }
   worker_nodes = {
-    for key, node_config in local.all_nodes: key => node_config
+    for key, node_config in local.all_nodes : key => node_config
     if node_config.node_type == "worker"
   }
   first_controller_ip = local.controller_nodes[keys(local.controller_nodes)[0]].address
