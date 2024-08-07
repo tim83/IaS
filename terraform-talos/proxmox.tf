@@ -28,6 +28,8 @@ resource "proxmox_virtual_environment_download_file" "talos" {
 
   url       = "https://factory.talos.dev/image/${var.talos_factory_id}/v${var.talos_version}/nocloud-amd64.iso"
   file_name = "talos-v${var.talos_version}-nocloud-amd64-${var.talos_factory_id}.iso"
+
+  overwrite_unmanaged = true
 }
 
 # see https://registry.terraform.io/providers/bpg/proxmox/0.60.0/docs/resources/virtual_environment_vm
