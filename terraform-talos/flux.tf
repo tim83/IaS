@@ -9,7 +9,7 @@ resource "flux_bootstrap_git" "this" {
 resource "kubernetes_secret" "sops-age" {
   metadata {
     name = "sops-age"
-    namespace = "flux-system"
+    namespace = "default"
   }
 
   data = {
