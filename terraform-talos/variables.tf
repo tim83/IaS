@@ -1,8 +1,3 @@
-variable "proxmox_pve_node_name" {
-  type    = string
-  default = "pve"
-}
-
 variable "proxmox_pve_node_address" {
   type    = string
   default = "https://192.168.20.1:8006/api2/json"
@@ -45,7 +40,7 @@ variable "kubernetes_version" {
 variable "cluster_name" {
   description = "A name to provide for the Talos cluster"
   type        = string
-  default     = "talos-home"
+  default     = "home.mees-olivier.com"
 }
 
 variable "cluster_vip" {
