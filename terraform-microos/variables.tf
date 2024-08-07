@@ -46,13 +46,13 @@ variable "cluster_node_network" {
 variable "cluster_node_network_first_controller_hostnum" {
   description = "The hostnum of the first controller host"
   type        = number
-  default     = 80
+  default     = 10
 }
 
 variable "cluster_node_network_first_worker_hostnum" {
   description = "The hostnum of the first worker host"
   type        = number
-  default     = 90
+  default     = 20
 }
 
 variable "cluster_node_network_load_balancer_first_hostnum" {

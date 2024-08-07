@@ -14,13 +14,22 @@ locals {
 }
 
 # see https://registry.terraform.io/providers/bpg/proxmox/0.60.0/docs/resources/virtual_environment_file
-resource "proxmox_virtual_environment_download_file" "microos" {
+resource "proxmox_virtual_environment_download_file" "microos-cloudinit" {
   datastore_id = "local"
   node_name    = "pve"
   content_type = "iso"
 
   url       = "https://download.opensuse.org/tumbleweed/appliances/openSUSE-MicroOS.x86_64-OpenStack-Cloud.qcow2"
   file_name = "microos-cloudinit.img"
+}
+# see https://registry.terraform.io/providers/bpg/proxmox/0.60.0/docs/resources/virtual_environment_file
+resource "proxmox_virtual_environment_download_file" "microos-qemu" {
+  datastore_id = "local"
+  node_name    = "pve"
+  content_type = "iso"
+
+  url       = "https://download.opensuse.org/tumbleweed/appliances/openSUSE-MicroOS.x86_64-kvm-and-xen.qcow2"
+  file_name = "microos-qemu.img"
 }
 
 resource "proxmox_virtual_environment_file" "cloud_config" {
@@ -93,7 +102,7 @@ resource "proxmox_virtual_environment_vm" "controller" {
     discard      = "on"
     size         = 60
     file_format  = "raw"
-    file_id = proxmox_virtual_environment_download_file.microos.id
+    file_id = proxmox_virtual_environment_download_file.microos-cloudinit.id
   }
   agent {
     enabled = true
@@ -155,7 +164,7 @@ resource "proxmox_virtual_environment_vm" "worker" {
     discard      = "on"
     size         = 60
     file_format  = "raw"
-    file_id = proxmox_virtual_environment_download_file.microos.id
+    file_id = proxmox_virtual_environment_download_file.microos-cloudinit.id
   }
   agent {
     enabled = true
