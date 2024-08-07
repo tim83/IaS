@@ -66,18 +66,6 @@ variable "cluster_node_network" {
   default     = "192.168.40.0/24"
 }
 
-variable "cluster_node_network_first_controller_hostnum" {
-  description = "The hostnum of the first controller host"
-  type        = number
-  default     = 80
-}
-
-variable "cluster_node_network_first_worker_hostnum" {
-  description = "The hostnum of the first worker host"
-  type        = number
-  default     = 90
-}
-
 variable "cluster_node_network_load_balancer_first_hostnum" {
   description = "The hostnum of the first load balancer host"
   type        = number
@@ -90,18 +78,30 @@ variable "cluster_node_network_load_balancer_last_hostnum" {
   default     = 230
 }
 
-variable "controller_count" {
-  type    = number
-  default = 2
-  validation {
-    condition     = var.controller_count >= 1
-    error_message = "Must be 1 or more."
-  }
-}
-
-variable "worker_count" {
-  type    = number
-  default = 1
+variable "node_config" {
+  type    = list(object({
+    pve_node_name = string
+    node_type = string
+    count = number
+    cpu_count = number
+    max_ram_gb = number
+}))
+  default = [
+    {
+      pve_node_name= "pve"
+      node_type= "controller"
+      count= 2
+      cpu_count = 2
+      max_ram_gb= 2
+    },
+    {
+      pve_node_name =  "pve"
+      node_type =  "worker"
+      count =  1
+      cpu_count =  4
+      max_ram_gb =  4
+    },
+  ]
 }
 
 variable "prefix" {

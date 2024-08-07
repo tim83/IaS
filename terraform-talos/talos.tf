@@ -1,16 +1,13 @@
 locals {
-  controller_nodes = [
-    for i in range(var.controller_count) : {
-      name    = "controller-${i}"
-      address = cidrhost(var.cluster_node_network, var.cluster_node_network_first_controller_hostnum + i)
-    }
-  ]
-  worker_nodes = [
-    for i in range(var.worker_count) : {
-      name    = "worker-${i}"
-      address = cidrhost(var.cluster_node_network, var.cluster_node_network_first_worker_hostnum + i)
-    }
-  ]
+  controller_nodes = {
+    for key, node_config in local.all_nodes: key => node_config
+    if node_config.node_type == "controller"
+  }
+  worker_nodes = {
+    for key, node_config in local.all_nodes: key => node_config
+    if node_config.node_type == "worker"
+  }
+  first_controller_ip = local.controller_nodes[keys(local.controller_nodes)[0]].address
 }
 
 // see https://registry.terraform.io/providers/siderolabs/talos/0.5.0/docs/resources/machine_secrets
@@ -50,8 +47,8 @@ data "talos_client_configuration" "talos" {
 // see https://registry.terraform.io/providers/siderolabs/talos/0.5.0/docs/data-sources/cluster_kubeconfig
 data "talos_cluster_kubeconfig" "talos" {
   client_configuration = talos_machine_secrets.talos.client_configuration
-  endpoint             = local.controller_nodes[0].address
-  node                 = local.controller_nodes[0].address
+  endpoint             = local.first_controller_ip
+  node                 = local.first_controller_ip
   depends_on = [
     talos_machine_bootstrap.talos,
   ]
@@ -59,11 +56,12 @@ data "talos_cluster_kubeconfig" "talos" {
 
 // see https://registry.terraform.io/providers/siderolabs/talos/0.5.0/docs/resources/machine_configuration_apply
 resource "talos_machine_configuration_apply" "controller" {
-  count                       = var.controller_count
+  for_each = local.controller_nodes
+
   client_configuration        = talos_machine_secrets.talos.client_configuration
   machine_configuration_input = data.talos_machine_configuration.controller.machine_configuration
-  endpoint                    = local.controller_nodes[count.index].address
-  node                        = local.controller_nodes[count.index].address
+  endpoint                    = each.value.address
+  node                        = each.value.address
   config_patches = [
     yamlencode({
       cluster = {
@@ -91,19 +89,20 @@ resource "talos_machine_configuration_apply" "controller" {
     }),
   ]
   depends_on = [
-    proxmox_virtual_environment_vm.controller,
+    proxmox_virtual_environment_vm.talos_node,
   ]
 }
 
 // see https://registry.terraform.io/providers/siderolabs/talos/0.5.0/docs/resources/machine_configuration_apply
 resource "talos_machine_configuration_apply" "worker" {
-  count                       = var.worker_count
+  for_each = local.worker_nodes
+
   client_configuration        = talos_machine_secrets.talos.client_configuration
   machine_configuration_input = data.talos_machine_configuration.worker.machine_configuration
-  endpoint                    = local.worker_nodes[count.index].address
-  node                        = local.worker_nodes[count.index].address
+  endpoint                    = each.value.address
+  node                        = each.value.address
   depends_on = [
-    proxmox_virtual_environment_vm.worker,
+    proxmox_virtual_environment_vm.talos_node,
   ]
   config_patches = [
     yamlencode({
@@ -120,8 +119,8 @@ resource "talos_machine_configuration_apply" "worker" {
 // see https://registry.terraform.io/providers/siderolabs/talos/0.5.0/docs/resources/machine_bootstrap
 resource "talos_machine_bootstrap" "talos" {
   client_configuration = talos_machine_secrets.talos.client_configuration
-  endpoint             = local.controller_nodes[0].address
-  node                 = local.controller_nodes[0].address
+  endpoint             = local.first_controller_ip
+  node                 = local.first_controller_ip
   depends_on = [
     talos_machine_configuration_apply.controller,
   ]

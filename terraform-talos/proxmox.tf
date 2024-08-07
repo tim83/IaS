@@ -1,7 +1,29 @@
+locals {
+  pve_nodes = toset([for config in var.node_config : config.pve_node_name])
+  all_nodes = merge(flatten([
+    for config_idx, node_config in var.node_config: [
+      for node_idx in range(node_config.count): [
+        {
+          "${node_config.pve_node_name}-${node_config.node_type}-${config_idx * 10 + node_idx}" = merge(
+            node_config,
+            {
+              address = cidrhost(var.cluster_node_network, config_idx * 10 + node_idx)
+              name = "${node_config.node_type}-${config_idx * 10 + node_idx}"
+            }
+            )
+        }
+      ]
+    ]
+  ])...
+  )
+}
+
 # see https://registry.terraform.io/providers/bpg/proxmox/0.60.0/docs/resources/virtual_environment_file
 resource "proxmox_virtual_environment_download_file" "talos" {
+  for_each = local.pve_nodes
+  
+  node_name    = each.value
   datastore_id = "local"
-  node_name    = "pve"
   content_type = "iso"
 
   url       = "https://factory.talos.dev/image/${var.talos_factory_id}/v${var.talos_version}/nocloud-amd64.iso"
@@ -9,11 +31,12 @@ resource "proxmox_virtual_environment_download_file" "talos" {
 }
 
 # see https://registry.terraform.io/providers/bpg/proxmox/0.60.0/docs/resources/virtual_environment_vm
-resource "proxmox_virtual_environment_vm" "controller" {
-  count           = var.controller_count
-  name            = "${var.prefix}-${local.controller_nodes[count.index].name}"
-  node_name       = "pve"
-  tags            = sort(["talos", "controller", "terraform"])
+resource "proxmox_virtual_environment_vm" "talos_node" {
+  for_each = local.all_nodes
+  
+  name            = "${var.prefix}-${each.value.name}"
+  node_name       = each.value.pve_node_name
+  tags            = sort(["talos", "terraform", each.value.node_type])
   stop_on_destroy = true
   bios            = "ovmf"
   scsi_hardware   = "virtio-scsi-single"
@@ -22,13 +45,10 @@ resource "proxmox_virtual_environment_vm" "controller" {
   }
   cpu {
     type  = "host"
-    cores = 4
+    cores = each.value.cpu_count
   }
   memory {
-    dedicated = 2 * 1024
-  }
-  vga {
-    type = "qxl"
+    dedicated = each.value.max_ram_gb * 1024
   }
   network_device {
     bridge   = "vmbr0"
@@ -39,7 +59,7 @@ resource "proxmox_virtual_environment_vm" "controller" {
   }
   cdrom {
     enabled = true
-    file_id = proxmox_virtual_environment_download_file.talos.id
+    file_id = proxmox_virtual_environment_download_file.talos[each.value.pve_node_name].id
   }
   efi_disk {
     datastore_id = "local-lvm"
@@ -61,7 +81,7 @@ resource "proxmox_virtual_environment_vm" "controller" {
   initialization {
     ip_config {
       ipv4 {
-        address = "${local.controller_nodes[count.index].address}/16"
+        address = "${each.value.address}/16"
         gateway = var.cluster_node_network_gateway
       }
       ipv6 {
@@ -71,66 +91,3 @@ resource "proxmox_virtual_environment_vm" "controller" {
   }
 }
 
-# see https://registry.terraform.io/providers/bpg/proxmox/0.60.0/docs/resources/virtual_environment_vm
-resource "proxmox_virtual_environment_vm" "worker" {
-  count           = var.worker_count
-  name            = "${var.prefix}-${local.worker_nodes[count.index].name}"
-  node_name       = "pve"
-  tags            = sort(["talos", "worker", "terraform"])
-  stop_on_destroy = true
-  bios            = "ovmf"
-  machine         = "q35"
-  scsi_hardware   = "virtio-scsi-single"
-  operating_system {
-    type = "l26"
-  }
-  cpu {
-    type  = "host"
-    cores = 4
-  }
-  memory {
-    dedicated = 4 * 1024
-  }
-  vga {
-    type = "qxl"
-  }
-  network_device {
-    bridge   = "vmbr0"
-    firewall = true
-  }
-  tpm_state {
-    version = "v2.0"
-  }
-  cdrom {
-    enabled = true
-    file_id = proxmox_virtual_environment_download_file.talos.id
-  }
-  efi_disk {
-    datastore_id = "local-lvm"
-    file_format  = "raw"
-    type         = "4m"
-  }
-  disk {
-    datastore_id = "local-lvm"
-    interface    = "scsi0"
-    iothread     = true
-    discard      = "on"
-    size         = 60
-    file_format  = "raw"
-  }
-  agent {
-    enabled = true
-    trim    = true
-  }
-  initialization {
-    ip_config {
-      ipv4 {
-        address = "${local.worker_nodes[count.index].address}/16"
-        gateway = var.cluster_node_network_gateway
-      }
-      ipv6 {
-        address = "dhcp"
-      }
-    }
-  }
-}
