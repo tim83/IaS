@@ -51,6 +51,7 @@ resource "proxmox_virtual_environment_vm" "talos_node" {
   }
   memory {
     dedicated = each.value.max_ram_gb * 1024
+    floating = each.value.max_ram_gb * 1024
   }
   network_device {
     bridge   = "vmbr0"
