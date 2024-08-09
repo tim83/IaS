@@ -9,12 +9,12 @@ resource "flux_bootstrap_git" "this" {
 resource "kubernetes_secret" "sops-age" {
   metadata {
     name      = "sops-age"
-    namespace = "default"
+    namespace = "flux-system"
   }
 
   data = {
     "age.agekey" = "${file("${path.module}/../../fluxcd/age.agekey")}"
   }
 
-  depends_on = [time_sleep.wait_for_cluster_ip]
+  depends_on = [flux_bootstrap_git.this]
 }
