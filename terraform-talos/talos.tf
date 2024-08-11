@@ -127,7 +127,7 @@ resource "talos_machine_bootstrap" "talos" {
 }
 
 resource "time_sleep" "wait_for_cluster_ip" {
-  create_duration = "60s"
+  create_duration = "90s"
 
   depends_on = [talos_machine_bootstrap.talos]
 }
