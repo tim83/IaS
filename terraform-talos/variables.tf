@@ -92,9 +92,9 @@ variable "node_config" {
     {
       pve_node_name = "pve"
       node_type     = "worker"
-      count         = 1
-      cpu_count     = 4
-      max_ram_gb    = 4
+      count         = 2
+      cpu_count     = 6
+      max_ram_gb    = 6
     },
   ]
 }
