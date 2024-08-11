@@ -64,9 +64,9 @@ resource "talos_machine_configuration_apply" "controller" {
   node                        = each.value.address
   config_patches = [
     yamlencode({
-      cluster = {
-        allowSchedulingOnControlPlanes = true,
-      },
+      # cluster = {
+      #   allowSchedulingOnControlPlanes = true,
+      # },
       machine = {
         install = {
           disk  = "/dev/sda"
