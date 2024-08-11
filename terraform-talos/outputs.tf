@@ -18,10 +18,10 @@ output "workers" {
 
 resource "local_file" "kubeconfig" {
   filename = pathexpand("~/.kube/config")
-  content = data.talos_cluster_kubeconfig.talos.kubeconfig_raw
+  content  = data.talos_cluster_kubeconfig.talos.kubeconfig_raw
 }
 
 resource "local_file" "talosconfig" {
   filename = pathexpand("~/.talos/config")
-  content = data.talos_client_configuration.talos.talos_config
+  content  = data.talos_client_configuration.talos.talos_config
 }
