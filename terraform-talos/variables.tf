@@ -100,15 +100,15 @@ variable "node_config" {
       pve_node_name = "coolermater"
       node_type     = "controller"
       count         = 1
-      cpu_count     = 2
-      max_ram_gb    = 2
+      cpu_count     = 3
+      max_ram_gb    = 3
     },
     {
       pve_node_name = "coolermater"
       node_type     = "worker"
       count         = 1
-      cpu_count     = 2
-      max_ram_gb    = 6
+      cpu_count     = 3
+      max_ram_gb    = 7
     },
   ]
 }
