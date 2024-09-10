@@ -83,28 +83,28 @@ variable "node_config" {
   }))
   default = [
     {
-      pve_node_name = "pve"
+      pve_node_name = "thinkcentre"
       node_type     = "controller"
       count         = 2
       cpu_count     = 2
       max_ram_gb    = 2
     },
     {
-      pve_node_name = "pve"
+      pve_node_name = "thinkcentre"
       node_type     = "worker"
       count         = 2
       cpu_count     = 6
       max_ram_gb    = 6
     },
     {
-      pve_node_name = "coolermaster"
+      pve_node_name = "coolermater"
       node_type     = "controller"
       count         = 1
       cpu_count     = 2
       max_ram_gb    = 2
     },
     {
-      pve_node_name = "coolermaster"
+      pve_node_name = "coolermater"
       node_type     = "worker"
       count         = 1
       cpu_count     = 2
