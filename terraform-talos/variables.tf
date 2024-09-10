@@ -96,6 +96,20 @@ variable "node_config" {
       cpu_count     = 6
       max_ram_gb    = 6
     },
+    {
+      pve_node_name = "coolermaster"
+      node_type     = "controller"
+      count         = 1
+      cpu_count     = 2
+      max_ram_gb    = 2
+    },
+    {
+      pve_node_name = "coolermaster"
+      node_type     = "worker"
+      count         = 1
+      cpu_count     = 2
+      max_ram_gb    = 6
+    },
   ]
 }
 
