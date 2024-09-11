@@ -22,7 +22,7 @@ variable "talos_version" {
 
 variable "talos_factory_id" {
   type    = string
-  default = "ce4c980550dd2ab1b17bbf2b08801c7eb59418eafe8f279833297925d67c7515"
+  default = "dc7b152cb3ea99b821fcb7340ce7168313ce393d663740b791c36f6e95fc8586"
 }
 
 # see https://github.com/siderolabs/kubelet/pkgs/container/kubelet
