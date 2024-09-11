@@ -86,20 +86,6 @@ resource "talos_machine_configuration_apply" "controller" {
             }
           ]
         }
-        kubelet = {
-          extraArgs = { rotate-server-certificates = true }
-        }
-        files = [{
-          content = "[metrics]\n address = '0.0.0.0:11234'"
-          path    = "/etc/cri/conf.d/20-customization.part"
-          op      = "create"
-        }]
-      }
-      cluster = {
-        extraManifests = [
-          "https://raw.githubusercontent.com/alex1989hu/kubelet-serving-cert-approver/main/deploy/standalone-install.yaml",
-          "https://github.com/kubernetes-sigs/metrics-server/releases/latest/download/components.yaml",
-        ]
       }
     }),
   ]
@@ -138,20 +124,6 @@ resource "talos_machine_configuration_apply" "hybrid" {
             }
           ]
         }
-        kubelet = {
-          extraArgs = { rotate-server-certificates = true }
-        }
-        files = [{
-          content = "[metrics]\n address = '0.0.0.0:11234'"
-          path    = "/etc/cri/conf.d/20-customization.part"
-          op      = "create"
-        }]
-      }
-      cluster = {
-        extraManifests = [
-          "https://raw.githubusercontent.com/alex1989hu/kubelet-serving-cert-approver/main/deploy/standalone-install.yaml",
-          "https://github.com/kubernetes-sigs/metrics-server/releases/latest/download/components.yaml",
-        ]
       }
     }),
   ]
