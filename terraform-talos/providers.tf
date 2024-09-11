@@ -46,11 +46,11 @@ provider "proxmox" {
     agent    = true
 
     node {
-      name = "thinkcentre"
+      name    = "thinkcentre"
       address = "192.168.20.1"
     }
     node {
-      name = "coolermater"
+      name    = "coolermater"
       address = "192.168.20.2"
     }
   }
