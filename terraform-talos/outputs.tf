@@ -15,13 +15,3 @@ output "controllers" {
 output "workers" {
   value = join(",", [for node in local.worker_nodes : node.address])
 }
-
-resource "local_file" "kubeconfig" {
-  filename = pathexpand("~/.kube/config")
-  content  = data.talos_cluster_kubeconfig.talos.kubeconfig_raw
-}
-
-resource "local_file" "talosconfig" {
-  filename = pathexpand("~/.talos/config")
-  content  = data.talos_client_configuration.talos.talos_config
-}
