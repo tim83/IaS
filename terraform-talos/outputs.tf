@@ -9,7 +9,7 @@ output "kubeconfig" {
 }
 
 output "controllers" {
-  value = join(",", [for node in local.controller_nodes : node.address])
+  value = join(",", [for node in merge(local.controller_nodes, local.hybrid_nodes) : node.address])
 }
 
 output "workers" {
