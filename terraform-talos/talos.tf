@@ -3,6 +3,10 @@ locals {
     for key, node_config in local.all_nodes : key => node_config
     if node_config.node_type == "controller"
   }
+  hybrid_nodes = {
+    for key, node_config in local.all_nodes : key => node_config
+    if node_config.node_type == "hybrid"
+  }
   worker_nodes = {
     for key, node_config in local.all_nodes : key => node_config
     if node_config.node_type == "worker"
@@ -64,9 +68,6 @@ resource "talos_machine_configuration_apply" "controller" {
   node                        = each.value.address
   config_patches = [
     yamlencode({
-      # cluster = {
-      #   allowSchedulingOnControlPlanes = true,
-      # },
       machine = {
         install = {
           disk  = "/dev/sda"
@@ -107,7 +108,58 @@ resource "talos_machine_configuration_apply" "controller" {
   ]
 }
 
-// see https://registry.terraform.io/providers/siderolabs/talos/0.5.0/docs/resources/machine_configuration_apply
+resource "talos_machine_configuration_apply" "controller" {
+  for_each = local.hybrid_nodes
+
+  client_configuration        = talos_machine_secrets.talos.client_configuration
+  machine_configuration_input = data.talos_machine_configuration.controller.machine_configuration
+  endpoint                    = each.value.address
+  node                        = each.value.address
+  config_patches = [
+    yamlencode({
+      cluster = {
+        allowSchedulingOnControlPlanes = true,
+      },
+      machine = {
+        install = {
+          disk  = "/dev/sda"
+          image = "factory.talos.dev/installer/${var.talos_factory_id}:v${var.talos_version}"
+        }
+        network = {
+          interfaces = [
+            # see https://www.talos.dev/v1.7/talos-guides/network/vip/
+            {
+              deviceSelector = {
+                busPath = "0*"
+              },
+              vip = {
+                ip = var.cluster_vip
+              }
+            }
+          ]
+        }
+        kubelet = {
+          extraArgs = { rotate-server-certificates = true }
+        }
+        files = [{
+          content = "[metrics]\n address = '0.0.0.0:11234'"
+          path    = "/etc/cri/conf.d/20-customization.part"
+          op      = "create"
+        }]
+      }
+      cluster = {
+        extraManifests = [
+          "https://raw.githubusercontent.com/alex1989hu/kubelet-serving-cert-approver/main/deploy/standalone-install.yaml",
+          "https://github.com/kubernetes-sigs/metrics-server/releases/latest/download/components.yaml",
+        ]
+      }
+    }),
+  ]
+  depends_on = [
+    proxmox_virtual_environment_vm.talos_node,
+  ]
+}
+
 resource "talos_machine_configuration_apply" "worker" {
   for_each = local.worker_nodes
 

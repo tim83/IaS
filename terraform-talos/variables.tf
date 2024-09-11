@@ -80,15 +80,17 @@ variable "node_config" {
     count         = number
     cpu_count     = number
     max_ram_gb    = number
+    disk_size     = number
   }))
   default = [
     {
-      pve_node_name = "thinkcentre"
-      node_type     = "controller"
-      count         = 2
-      cpu_count     = 2
-      max_ram_gb    = 2
-      disk_size = 30
+      pve_node_name  = "thinkcentre"
+      node_type      = "controller"
+      allow_workload = true
+      count          = 2
+      cpu_count      = 2
+      max_ram_gb     = 2
+      disk_size      = 30
     },
     {
       pve_node_name = "thinkcentre"
@@ -96,23 +98,15 @@ variable "node_config" {
       count         = 2
       cpu_count     = 6
       max_ram_gb    = 6
-      disk_size = 200
+      disk_size     = 200
     },
     {
       pve_node_name = "coolermater"
-      node_type     = "controller"
+      node_type     = "hybrid"
       count         = 1
       cpu_count     = 3
-      max_ram_gb    = 3
-      disk_size = 30
-    },
-    {
-      pve_node_name = "coolermater"
-      node_type     = "worker"
-      count         = 1
-      cpu_count     = 3
-      max_ram_gb    = 7
-      disk_size = 200
+      max_ram_gb    = 8
+      disk_size     = 200
     },
   ]
 }
