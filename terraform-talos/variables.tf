@@ -89,7 +89,7 @@ variable "node_config" {
       allow_workload = true
       count          = 2
       cpu_count      = 2
-      max_ram_gb     = 2
+      max_ram_gb     = 6
       disk_size      = 30
     },
     {
@@ -97,7 +97,7 @@ variable "node_config" {
       node_type     = "worker"
       count         = 2
       cpu_count     = 6
-      max_ram_gb    = 6
+      max_ram_gb    = 12
       disk_size     = 200
     },
     {
