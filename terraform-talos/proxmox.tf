@@ -74,7 +74,7 @@ resource "proxmox_virtual_environment_vm" "talos_node" {
     interface    = "scsi0"
     iothread     = true
     discard      = "on"
-    size         = 60
+    size         = each.value.disk_size
     file_format  = "raw"
   }
   agent {
