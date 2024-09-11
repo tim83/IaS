@@ -9,6 +9,12 @@ resource "kubernetes_namespace" "flux-system" {
   metadata {
     name = "flux-system"
   }
+  
+  lifecycle {
+    ignore_changes = [
+      metadata[0].labels,
+    ]
+  }
 
   depends_on = [time_sleep.wait_for_cluster_ip]
 }
