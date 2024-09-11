@@ -108,7 +108,7 @@ resource "talos_machine_configuration_apply" "controller" {
   ]
 }
 
-resource "talos_machine_configuration_apply" "controller" {
+resource "talos_machine_configuration_apply" "hybrid" {
   for_each = local.hybrid_nodes
 
   client_configuration        = talos_machine_secrets.talos.client_configuration
