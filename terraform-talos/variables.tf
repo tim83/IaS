@@ -90,7 +90,7 @@ variable "node_config" {
       count          = 2
       cpu_count      = 2
       max_ram_gb     = 6
-      disk_size      = 30
+      disk_size      = 60
     },
     {
       pve_node_name = "thinkcentre"
