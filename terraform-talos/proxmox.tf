@@ -76,6 +76,7 @@ resource "proxmox_virtual_environment_vm" "talos_node" {
     discard      = "on"
     size         = each.value.disk_size
     file_format  = "raw"
+    ssd = true
   }
   agent {
     enabled = true
