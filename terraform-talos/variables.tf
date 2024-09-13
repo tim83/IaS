@@ -97,7 +97,7 @@ variable "node_config" {
       node_type     = "worker"
       count         = 2
       cpu_count     = 6
-      max_ram_gb    = 12
+      max_ram_gb    = 16
       disk_size     = 350
     },
     {
