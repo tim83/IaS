@@ -9,6 +9,7 @@ locals {
             {
               address = cidrhost(var.cluster_node_network, config_idx * 10 + node_idx)
               name    = "${node_config.node_type}-${config_idx * 10 + node_idx}"
+              idx     = config_idx * 10 + node_idx
             }
           )
         }
@@ -36,8 +37,10 @@ resource "proxmox_virtual_environment_download_file" "talos" {
 resource "proxmox_virtual_environment_vm" "talos_node" {
   for_each = local.all_nodes
 
-  name            = "${var.prefix}-${each.value.name}"
-  node_name       = each.value.pve_node_name
+  name      = "${var.prefix}-${each.value.name}"
+  node_name = each.value.pve_node_name
+  vm_id     = 800 + each.value.idx
+
   tags            = sort(["talos", "terraform", each.value.node_type])
   stop_on_destroy = true
   bios            = "ovmf"
@@ -95,6 +98,10 @@ resource "proxmox_virtual_environment_vm" "talos_node" {
         address = "dhcp"
       }
     }
+  }
+
+  lifecycle {
+    create_before_destroy = true
   }
 }
 
