@@ -3,18 +3,6 @@
 ## Prepare proxmox (for every node)
 
 - Install proxmox
-- Change proxmox repositories to use non-subscription repos
-
-```bash
-sed -i "s/pve-enterprise/pve-no-subscription/" /etc/apt/sources.list.d/pve-enterprise.list
-sed -i "s/enterprise.proxmox.com/download.proxmox.com/" /etc/apt/sources.list.d/pve-enterprise.list
-sed -i "s/https/http/" /etc/apt/sources.list.d/pve-enterprise.list
-
-sed -i "s/enterprise.proxmox.com/download.proxmox.com/" /etc/apt/sources.list.d/ceph.list
-sed -i "s/enterprise/no-subscription/" /etc/apt/sources.list.d/ceph.list
-sed -i "s/https/http/" /etc/apt/sources.list.d/ceph.list
-```
-
 - Create user & API token
 
 ```bash
