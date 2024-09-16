@@ -16,7 +16,7 @@ locals {
 # see https://registry.terraform.io/providers/bpg/proxmox/0.60.0/docs/resources/virtual_environment_file
 resource "proxmox_virtual_environment_download_file" "microos-cloudinit" {
   datastore_id = "local"
-  node_name    = "pve"
+  node_name    = var.proxmox_pve_node_name
   content_type = "iso"
 
   url       = "https://download.opensuse.org/tumbleweed/appliances/openSUSE-MicroOS.x86_64-OpenStack-Cloud.qcow2"
@@ -25,7 +25,7 @@ resource "proxmox_virtual_environment_download_file" "microos-cloudinit" {
 # see https://registry.terraform.io/providers/bpg/proxmox/0.60.0/docs/resources/virtual_environment_file
 resource "proxmox_virtual_environment_download_file" "microos-qemu" {
   datastore_id = "local"
-  node_name    = "pve"
+  node_name    = var.proxmox_pve_node_name
   content_type = "iso"
 
   url       = "https://download.opensuse.org/tumbleweed/appliances/openSUSE-MicroOS.x86_64-kvm-and-xen.qcow2"
@@ -35,7 +35,7 @@ resource "proxmox_virtual_environment_download_file" "microos-qemu" {
 resource "proxmox_virtual_environment_file" "cloud_config" {
   content_type = "snippets"
   datastore_id = "local"
-  node_name    = "pve"
+  node_name    = var.proxmox_pve_node_name
 
   source_raw {
     data = <<-EOF
@@ -55,6 +55,7 @@ resource "proxmox_virtual_environment_file" "cloud_config" {
         - systemctl enable qemu-guest-agent
         - systemctl start qemu-guest-agent
         - echo "done" > /tmp/cloud-config.done
+        - systemctl reboot
     EOF
 
     file_name = "cloud-config.yaml"
@@ -65,7 +66,7 @@ resource "proxmox_virtual_environment_file" "cloud_config" {
 resource "proxmox_virtual_environment_vm" "controller" {
   count           = var.controller_count
   name            = "${var.prefix}-${local.controller_nodes[count.index].name}"
-  node_name       = "pve"
+  node_name       = var.proxmox_pve_node_name
   tags            = sort(["microos", "controller", "terraform"])
   stop_on_destroy = true
   bios            = "ovmf"
@@ -126,8 +127,8 @@ resource "proxmox_virtual_environment_vm" "controller" {
 resource "proxmox_virtual_environment_vm" "worker" {
   count           = var.worker_count
   name            = "${var.prefix}-${local.worker_nodes[count.index].name}"
-  node_name       = "pve"
-  tags            = sort(["talos", "worker", "terraform"])
+  node_name       = var.proxmox_pve_node_name
+  tags            = sort(["microos", "worker", "terraform"])
   stop_on_destroy = true
   bios            = "ovmf"
   machine         = "q35"

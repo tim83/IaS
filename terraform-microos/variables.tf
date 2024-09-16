@@ -1,6 +1,6 @@
 variable "proxmox_pve_node_name" {
   type    = string
-  default = "pve"
+  default = "thinkcentre"
 }
 
 variable "proxmox_pve_node_address" {
@@ -40,7 +40,7 @@ variable "cluster_node_network_gateway" {
 variable "cluster_node_network" {
   description = "The IP network prefix of the cluster nodes"
   type        = string
-  default     = "192.168.40.0/24"
+  default     = "192.168.45.0/24"
 }
 
 variable "cluster_node_network_first_controller_hostnum" {
@@ -69,7 +69,7 @@ variable "cluster_node_network_load_balancer_last_hostnum" {
 
 variable "controller_count" {
   type    = number
-  default = 0
+  default = 1
   # validation {
   #   condition     = var.controller_count >= 1
   #   error_message = "Must be 1 or more."
