@@ -87,7 +87,7 @@ variable "node_config" {
       pve_node_name  = "thinkcentre"
       node_type      = "controller"
       allow_workload = true
-      count          = 2
+      count          = 1
       cpu_count      = 2
       max_ram_gb     = 6
       disk_size      = 60
