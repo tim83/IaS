@@ -18,7 +18,7 @@ variable "proxmox_pve_api_token" {
 variable "kubernetes_version" {
   type = string
   # renovate: datasource=github-releases depName=k3s-io/k3s
-  default = "1.31.0+k3s1"
+  default = "1.31.1+k3s1"
   validation {
     condition     = can(regex("^\\d+(\\.\\d+)+", var.kubernetes_version))
     error_message = "Must be a version number."
