@@ -123,6 +123,16 @@ resource "talos_machine_configuration_apply" "hybrid" {
               }
             }
           ]
+        },
+        kubelet = {
+          extraMounts = [{
+            destination = "/var/lib/longhorn",
+            type        = "bind",
+            source      = "/var/lib/longhorn"
+            options = [
+              "bind", "rshared", "rw",
+            ]
+          }]
         }
       }
     }),
@@ -148,6 +158,16 @@ resource "talos_machine_configuration_apply" "worker" {
         install = {
           disk  = "/dev/sda"
           image = "factory.talos.dev/installer/${var.talos_factory_id}:v${var.talos_version}"
+        },
+        kubelet = {
+          extraMounts = [{
+            destination = "/var/lib/longhorn",
+            type        = "bind",
+            source      = "/var/lib/longhorn"
+            options = [
+              "bind", "rshared", "rw",
+            ]
+          }]
         }
       }
     })
