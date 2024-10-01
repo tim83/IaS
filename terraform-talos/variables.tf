@@ -110,10 +110,10 @@ variable "node_config" {
     },
     {
       pve_node_name = "coolermater"
-      node_type     = "hybrid"
+      node_type     = "controller"
       count         = 1
       cpu_count     = 1
-      max_ram_gb    = 1
+      max_ram_gb    = 2
       disk_size     = 60
     },
   ]
