@@ -105,7 +105,7 @@ variable "node_config" {
       node_type     = "hybrid"
       count         = 1
       cpu_count     = 3
-      max_ram_gb    = 0
+      max_ram_gb    = 9
       disk_size     = 350
     },
     {
