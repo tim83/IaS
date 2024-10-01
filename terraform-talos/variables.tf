@@ -87,7 +87,7 @@ variable "node_config" {
       pve_node_name  = "thinkcentre"
       node_type      = "controller"
       allow_workload = true
-      count          = 2
+      count          = 1
       cpu_count      = 2
       max_ram_gb     = 6
       disk_size      = 60
@@ -105,8 +105,16 @@ variable "node_config" {
       node_type     = "hybrid"
       count         = 1
       cpu_count     = 3
-      max_ram_gb    = 10
+      max_ram_gb    = 0
       disk_size     = 350
+    },
+    {
+      pve_node_name = "coolermater"
+      node_type     = "hybrid"
+      count         = 1
+      cpu_count     = 1
+      max_ram_gb    = 1
+      disk_size     = 60
     },
   ]
 }
