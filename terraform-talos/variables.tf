@@ -97,14 +97,14 @@ variable "node_config" {
       count         = 2
       cpu_count     = 6
       max_ram_gb    = 16
-      disk_size     = 350
+      disk_size     = 250
     },
     {
       pve_node_name = "coolermater"
       node_type     = "hybrid"
       count         = 1
       cpu_count     = 3
-      max_ram_gb    = 10
+      max_ram_gb    = 11
       disk_size     = 350
     },
     {
