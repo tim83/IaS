@@ -86,7 +86,7 @@ variable "node_config" {
     {
       pve_node_name  = "thinkcentre"
       node_type      = "controller"
-      count          = 1
+      count          = 0
       cpu_count      = 2
       max_ram_gb     = 6
       disk_size      = 60
@@ -110,7 +110,7 @@ variable "node_config" {
     {
       pve_node_name = "coolermater"
       node_type     = "controller"
-      count         = 1
+      count         = 0
       cpu_count     = 1
       max_ram_gb    = 2
       disk_size     = 60
