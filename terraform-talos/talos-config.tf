@@ -11,7 +11,8 @@ locals {
     for key, node_config in local.all_nodes : key => node_config
     if node_config.node_type == "worker"
   }
-  first_controller_ip = local.controller_nodes[keys(local.controller_nodes)[0]].address
+  first_controller_node = length(local.controller_nodes) > 0 ? local.controller_nodes[keys(local.controller_nodes)[0]] : local.hybrid_nodes[keys(local.hybrid_nodes)[0]]
+  first_controller_ip = local.first_controller_node.address
 }
 
 // see https://registry.terraform.io/providers/siderolabs/talos/0.5.0/docs/resources/machine_secrets
