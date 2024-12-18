@@ -18,7 +18,7 @@ terraform {
     # see https://github.com/siderolabs/terraform-provider-talos
     talos = {
       source  = "siderolabs/talos"
-      version = "0.6.1"
+      version = "0.7.0"
     }
     flux = {
       source  = "fluxcd/flux"
