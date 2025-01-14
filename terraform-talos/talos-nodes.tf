@@ -45,6 +45,7 @@ resource "proxmox_virtual_environment_vm" "talos_node" {
   stop_on_destroy = true
   bios            = "ovmf"
   scsi_hardware   = "virtio-scsi-single"
+  boot_order      = ["scsi0", "ide3", "net0"]
   operating_system {
     type = "l26"
   }
