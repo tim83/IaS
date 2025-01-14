@@ -77,6 +77,7 @@ variable "node_config" {
   type = list(object({
     pve_node_name = string
     node_type     = string
+    start_idx     = number
     count         = number
     cpu_count     = number
     max_ram_gb    = number
@@ -84,16 +85,18 @@ variable "node_config" {
   }))
   default = [
     {
-      pve_node_name  = "thinkcentre"
-      node_type      = "controller"
-      count          = 1
-      cpu_count      = 2
-      max_ram_gb     = 4
-      disk_size      = 60
+      pve_node_name = "thinkcentre"
+      node_type     = "controller"
+      start_idx     = 0
+      count         = 1
+      cpu_count     = 2
+      max_ram_gb    = 4
+      disk_size     = 60
     },
     {
       pve_node_name = "thinkcentre"
       node_type     = "worker"
+      start_idx     = 0
       count         = 2
       cpu_count     = 6
       max_ram_gb    = 16
@@ -102,6 +105,7 @@ variable "node_config" {
     {
       pve_node_name = "coolermater"
       node_type     = "hybrid"
+      start_idx     = 0
       count         = 1
       cpu_count     = 3
       max_ram_gb    = 11
@@ -110,6 +114,7 @@ variable "node_config" {
     {
       pve_node_name = "coolermater"
       node_type     = "controller"
+      start_idx     = 0
       count         = 0
       cpu_count     = 1
       max_ram_gb    = 2

@@ -4,12 +4,12 @@ locals {
     for config_idx, node_config in var.node_config : [
       for node_idx in range(node_config.count) : [
         {
-          "${node_config.pve_node_name}-${node_config.node_type}-${config_idx * 10 + node_idx}" = merge(
+          "${node_config.pve_node_name}-${node_config.node_type}-${config_idx * 10 + node_idx + node_config.start_idx}" = merge(
             node_config,
             {
-              address = cidrhost(var.cluster_node_network, config_idx * 10 + node_idx)
-              name    = "${node_config.node_type}-${config_idx * 10 + node_idx}"
-              idx     = config_idx * 10 + node_idx
+              address = cidrhost(var.cluster_node_network, config_idx * 10 + node_idx + node_config.start_idx)
+              name    = "${node_config.node_type}-${config_idx * 10 + node_idx + node_config.start_idx}"
+              idx     = config_idx * 10 + node_idx + node_config.start_idx
             }
           )
         }
