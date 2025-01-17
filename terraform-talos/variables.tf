@@ -104,9 +104,18 @@ variable "node_config" {
     },
     {
       pve_node_name = "coolermater"
-      node_type     = "hybrid"
+      node_type     = "worker"
       start_idx     = 0
       count         = 1
+      cpu_count     = 2
+      max_ram_gb    = 4
+      disk_size     = 350
+    },
+    {
+      pve_node_name = "coolermater"
+      node_type     = "hybrid"
+      start_idx     = 0
+      count         = 0
       cpu_count     = 3
       max_ram_gb    = 11
       disk_size     = 350
