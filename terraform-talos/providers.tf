@@ -81,8 +81,8 @@ provider "github" {
 }
 
 provider "kubernetes" {
-  host                   = var.kubernetes_host                   # data.talos_cluster_kubeconfig.talos.kubernetes_client_configuration.host
-  client_certificate     = base64decode(var.kuberentes_cert_b64) # data.talos_cluster_kubeconfig.talos.kubernetes_client_configuration.client_certificate
-  client_key             = base64decode(var.kuberentes_key_b64)  # data.talos_cluster_kubeconfig.talos.kubernetes_client_configuration.client_key
-  cluster_ca_certificate = base64decode(var.kubernetes_ca_b64)   # data.talos_cluster_kubeconfig.talos.kubernetes_client_configuration.ca_certificate
+  host                   = var.kubernetes_host                   # resource.talos_cluster_kubeconfig.talos.kubernetes_client_configuration.host
+  client_certificate     = base64decode(var.kuberentes_cert_b64) # resource.talos_cluster_kubeconfig.talos.kubernetes_client_configuration.client_certificate
+  client_key             = base64decode(var.kuberentes_key_b64)  # resource.talos_cluster_kubeconfig.talos.kubernetes_client_configuration.client_key
+  cluster_ca_certificate = base64decode(var.kubernetes_ca_b64)   # resource.talos_cluster_kubeconfig.talos.kubernetes_client_configuration.ca_certificate
 }
