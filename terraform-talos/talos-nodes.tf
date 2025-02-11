@@ -65,7 +65,6 @@ resource "proxmox_virtual_environment_vm" "talos_node" {
     version = "v2.0"
   }
   cdrom {
-    enabled = true
     file_id = proxmox_virtual_environment_download_file.talos[each.value.pve_node_name].id
   }
   efi_disk {
