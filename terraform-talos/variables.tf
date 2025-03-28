@@ -106,7 +106,7 @@ variable "node_config" {
       pve_node_name = "coolermater"
       node_type     = "worker"
       start_idx     = 0
-      count         = 1
+      count         = 0
       cpu_count     = 1
       max_ram_gb    = 4
       disk_size     = 450
