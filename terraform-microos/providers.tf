@@ -12,7 +12,7 @@ terraform {
     # see https://github.com/bpg/terraform-provider-proxmox
     proxmox = {
       source  = "bpg/proxmox"
-      version = "0.78.1"
+      version = "0.78.2"
     }
     github = {
       source  = "integrations/github"
