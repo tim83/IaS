@@ -90,7 +90,7 @@ variable "node_config" {
       start_idx     = 0
       count         = 1
       cpu_count     = 2
-      max_ram_gb    = 6
+      max_ram_gb    = 16
       disk_size     = 60
     },
     {
