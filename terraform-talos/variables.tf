@@ -137,20 +137,14 @@ variable "prefix" {
   default = "talos-home"
 }
 
-variable "github_token" {
-  description = "GitHub token"
+
+variable "git_repository" {
+  description = "Git Repostory for Flux"
+  type        = string
+  default     = "https://gitlab.com/tmee/fluxcd.git"
+}
+variable "gitlab_token" {
+  description = "GitLab token"
   sensitive   = true
   type        = string
-}
-
-variable "github_org" {
-  description = "GitHub organization"
-  type        = string
-  default     = "tim83"
-}
-
-variable "github_repository" {
-  description = "GitHub repository"
-  type        = string
-  default     = "fluxcd"
 }

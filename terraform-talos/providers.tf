@@ -24,10 +24,6 @@ terraform {
       source  = "fluxcd/flux"
       version = "1.6"
     }
-    github = {
-      source  = "integrations/github"
-      version = "6.6"
-    }
     kubernetes = {
       source  = "hashicorp/kubernetes"
       version = "2.37.1"
@@ -67,17 +63,12 @@ provider "flux" {
     cluster_ca_certificate = base64decode(var.kubernetes_ca_b64)
   }
   git = {
-    url = "https://github.com/${var.github_org}/${var.github_repository}.git"
+    url = var.git_repository    
     http = {
-      username = "personal-access-token" # This can be any string when using a personal access token
-      password = var.github_token
+      username = "fluxcd"
+      password = var.gitlab_token
     }
   }
-}
-
-provider "github" {
-  owner = var.github_org
-  token = var.github_token
 }
 
 provider "kubernetes" {

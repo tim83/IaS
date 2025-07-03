@@ -86,24 +86,6 @@ variable "prefix" {
   default = "microos-home"
 }
 
-variable "github_token" {
-  description = "GitHub token"
-  sensitive   = true
-  type        = string
-}
-
-variable "github_org" {
-  description = "GitHub organization"
-  type        = string
-  default     = "tim83"
-}
-
-variable "github_repository" {
-  description = "GitHub repository"
-  type        = string
-  default     = "fluxcd"
-}
-
 variable "authorized_ssh_key" {
   type = string
 }

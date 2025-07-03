@@ -14,10 +14,6 @@ terraform {
       source  = "bpg/proxmox"
       version = "0.78.2"
     }
-    github = {
-      source  = "integrations/github"
-      version = "6.6"
-    }
   }
 }
 
@@ -31,9 +27,4 @@ provider "proxmox" {
     username = "root"
     agent    = true
   }
-}
-
-provider "github" {
-  owner = var.github_org
-  token = var.github_token
 }
