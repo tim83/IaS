@@ -30,7 +30,7 @@ variable "talos_factory_id" {
 variable "kubernetes_version" {
   type = string
   # renovate: datasource=github-releases depName=siderolabs/kubelet
-  default = "1.33.2"
+  default = "1.33.3"
   validation {
     condition     = can(regex("^\\d+(\\.\\d+)+", var.kubernetes_version))
     error_message = "Must be a version number."
