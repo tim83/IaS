@@ -63,7 +63,7 @@ provider "flux" {
     cluster_ca_certificate = base64decode(var.kubernetes_ca_b64)
   }
   git = {
-    url = var.git_repository    
+    url = var.git_repository
     http = {
       username = "fluxcd"
       password = var.gitlab_token
