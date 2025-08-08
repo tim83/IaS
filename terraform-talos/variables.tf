@@ -100,7 +100,7 @@ variable "node_config" {
       count         = 1
       cpu_count     = 12
       max_ram_gb    = 32
-      disk_size     = 250
+      disk_size     = 350
     },
     {
       pve_node_name = "coolermater"
