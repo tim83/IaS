@@ -98,8 +98,8 @@ variable "node_config" {
       node_type     = "worker"
       start_idx     = 0
       count         = 1
-      cpu_count     = 10
-      max_ram_gb    = 24
+      cpu_count     = 8
+      max_ram_gb    = 20
       disk_size     = 350
     },
     {
@@ -134,7 +134,7 @@ variable "node_config" {
       node_type     = "worker"
       start_idx     = 0
       count         = 1
-      cpu_count     = 4
+      cpu_count     = 2
       max_ram_gb    = 8
       disk_size     = 150
     },
