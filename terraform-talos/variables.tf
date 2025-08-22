@@ -30,7 +30,7 @@ variable "talos_factory_id" {
 variable "kubernetes_version" {
   type = string
   # renovate: datasource=github-releases depName=siderolabs/kubelet
-  default = "1.33.4"
+  default = "1.33.3"
   validation {
     condition     = can(regex("^\\d+(\\.\\d+)+", var.kubernetes_version))
     error_message = "Must be a version number."
@@ -90,7 +90,7 @@ variable "node_config" {
       start_idx     = 0
       count         = 1
       cpu_count     = 2
-      max_ram_gb    = 5
+      max_ram_gb    = 16
       disk_size     = 60
     },
     {
@@ -98,8 +98,8 @@ variable "node_config" {
       node_type     = "worker"
       start_idx     = 0
       count         = 1
-      cpu_count     = 8
-      max_ram_gb    = 20
+      cpu_count     = 12
+      max_ram_gb    = 32
       disk_size     = 350
     },
     {
@@ -128,15 +128,6 @@ variable "node_config" {
       cpu_count     = 1
       max_ram_gb    = 2
       disk_size     = 60
-    },
-    {
-      pve_node_name = "thinkcentre"
-      node_type     = "worker"
-      start_idx     = 0
-      count         = 1
-      cpu_count     = 2
-      max_ram_gb    = 8
-      disk_size     = 150
     },
   ]
 }
