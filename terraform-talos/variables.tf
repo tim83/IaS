@@ -98,7 +98,7 @@ variable "node_config" {
       node_type     = "worker"
       start_idx     = 0
       count         = 1
-      cpu_count     = 12
+      cpu_count     = 10
       max_ram_gb    = 32
       disk_size     = 350
     },
@@ -128,6 +128,15 @@ variable "node_config" {
       cpu_count     = 1
       max_ram_gb    = 2
       disk_size     = 60
+    },
+    {
+      pve_node_name = "thinkcentre"
+      node_type     = "worker"
+      start_idx     = 0
+      count         = 1
+      cpu_count     = 1
+      max_ram_gb    = 4
+      disk_size     = 150
     },
   ]
 }
