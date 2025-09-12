@@ -1,15 +1,16 @@
 locals {
-  pve_nodes = toset([for config in var.node_config : config.pve_node_name])
-  all_nodes = merge(flatten([
-    for config_idx, node_config in var.node_config : [
+  pve_nodes = toset([for config in var.vm_node_config : config.pve_node_name])
+  vm_nodes = merge(flatten([
+    for config_idx, node_config in var.vm_node_config : [
       for node_idx in range(node_config.count) : [
         {
           "${node_config.pve_node_name}-${node_config.node_type}-${config_idx * 10 + node_idx + node_config.start_idx}" = merge(
             node_config,
             {
-              address = cidrhost(var.cluster_node_network, config_idx * 10 + node_idx + node_config.start_idx)
-              name    = "${node_config.node_type}-${config_idx * 10 + node_idx + node_config.start_idx}"
-              idx     = config_idx * 10 + node_idx + node_config.start_idx
+              address     = cidrhost(var.cluster_node_network, config_idx * 10 + node_idx + node_config.start_idx)
+              name        = "${node_config.node_type}-${config_idx * 10 + node_idx + node_config.start_idx}"
+              idx         = config_idx * 10 + node_idx + node_config.start_idx
+              device_type = "vm"
             }
           )
         }
@@ -17,6 +18,22 @@ locals {
     ]
     ])...
   )
+  metal_nodes = merge([
+    for node_idx, node_config in var.metal_node_config : {
+      "${node_config.device_type}-${node_config.node_type}-${100 + node_idx}" = merge(
+        node_config,
+        {
+          address = cidrhost(var.cluster_node_network, 100 + node_idx)
+          name    = "${node_config.device_type}-${node_config.node_type}-${100 + node_idx}"
+          idx     = 100 + node_idx
+        }
+      )
+    }
+    ]...
+  )
+}
+locals {
+  all_nodes = merge(local.vm_nodes, local.metal_nodes)
 }
 
 # see https://registry.terraform.io/providers/bpg/proxmox/0.60.0/docs/resources/virtual_environment_file
@@ -35,7 +52,7 @@ resource "proxmox_virtual_environment_download_file" "talos" {
 
 # see https://registry.terraform.io/providers/bpg/proxmox/0.60.0/docs/resources/virtual_environment_vm
 resource "proxmox_virtual_environment_vm" "talos_node" {
-  for_each = local.all_nodes
+  for_each = local.vm_nodes
 
   name      = "${var.prefix}-${each.value.name}"
   node_name = each.value.pve_node_name

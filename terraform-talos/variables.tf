@@ -25,6 +25,11 @@ variable "talos_factory_id" {
   default = "88d1f7a5c4f1d3aba7df787c448c1d3d008ed29cfb34af53fa0df4336a56040b"
 }
 
+variable "talos_rpi_factory_id" {
+  type    = string
+  default = "f47e6cd2634c7a96988861031bcc4144468a1e3aef82cca4f5b5ca3fffef778a"
+}
+
 # see https://github.com/siderolabs/kubelet/pkgs/container/kubelet
 # see https://www.talos.dev/v1.7/introduction/support-matrix/
 variable "kubernetes_version" {
@@ -61,19 +66,7 @@ variable "cluster_node_network" {
   default     = "192.168.40.0/24"
 }
 
-variable "cluster_node_network_load_balancer_first_hostnum" {
-  description = "The hostnum of the first load balancer host"
-  type        = number
-  default     = 130
-}
-
-variable "cluster_node_network_load_balancer_last_hostnum" {
-  description = "The hostnum of the last load balancer host"
-  type        = number
-  default     = 230
-}
-
-variable "node_config" {
+variable "vm_node_config" {
   type = list(object({
     pve_node_name = string
     node_type     = string
@@ -139,6 +132,15 @@ variable "node_config" {
       disk_size     = 150
     },
   ]
+}
+
+variable "metal_node_config" {
+  type = list(object({
+    device_type  = string
+    node_type    = string
+    bootstrap_ip = optional(string)
+  }))
+  default = []
 }
 
 variable "prefix" {

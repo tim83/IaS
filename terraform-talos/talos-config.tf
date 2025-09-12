@@ -1,18 +1,78 @@
 locals {
-  controller_nodes = {
-    for key, node_config in local.all_nodes : key => node_config
+  all_nodes_complete = {
+    for key, node_config in local.all_nodes :
+          key => merge(
+        node_config,
+        {
+          bootstrap_ip = can(node_config.bootstrap_ip) ? node_config.bootstrap_ip : node_config.address
+        }
+      )
+    }
+    controller_nodes = {
+    for key, node_config in local.all_nodes_complete : key => node_config
     if node_config.node_type == "controller"
   }
   hybrid_nodes = {
-    for key, node_config in local.all_nodes : key => node_config
+    for key, node_config in local.all_nodes_complete : key => node_config
     if node_config.node_type == "hybrid"
   }
   worker_nodes = {
-    for key, node_config in local.all_nodes : key => node_config
+    for key, node_config in local.all_nodes_complete : key => node_config
     if node_config.node_type == "worker"
   }
   first_controller_node = length(local.controller_nodes) > 0 ? local.controller_nodes[keys(local.controller_nodes)[0]] : local.hybrid_nodes[keys(local.hybrid_nodes)[0]]
   first_controller_ip   = local.first_controller_node.address
+}
+locals {
+  vm_config_patch = {
+    machine = {
+      install = {
+        disk  = "/dev/sda"
+        image = "factory.talos.dev/installer/${var.talos_factory_id}:v${var.talos_version}"
+      }
+    }
+  }
+  rpi_config_patch = {
+    machine = {
+      install = {
+        disk  = "/dev/sda"
+        image = "factory.talos.dev/installer/${var.talos_rpi_factory_id}:v${var.talos_version}"
+      }
+    }
+  }
+  controller_config_patch = {
+    network = {
+      interfaces = [
+        # see https://www.talos.dev/v1.7/talos-guides/network/vip/
+        {
+          deviceSelector = {
+            busPath = "0*"
+          },
+          vip = {
+            ip = var.cluster_vip
+          }
+        }
+      ]
+    },
+  }
+  hybrid_config_patch = {
+    cluster = {
+      allowSchedulingOnControlPlanes = true,
+    },
+  }
+  worker_config_patch = {
+    kubelet = {
+      extraMounts = [{
+        destination = "/var/lib/longhorn",
+        type        = "bind",
+        source      = "/var/lib/longhorn"
+        options = [
+          "bind", "rshared", "rw",
+        ]
+        }
+      ]
+    }
+  }
 }
 
 // see https://registry.terraform.io/providers/siderolabs/talos/0.5.0/docs/resources/machine_secrets
@@ -64,30 +124,12 @@ resource "talos_machine_configuration_apply" "controller" {
 
   client_configuration        = talos_machine_secrets.talos.client_configuration
   machine_configuration_input = data.talos_machine_configuration.controller.machine_configuration
-  endpoint                    = each.value.address
+  endpoint                    = each.value.bootstrap_ip
   node                        = each.value.address
   config_patches = [
-    yamlencode({
-      machine = {
-        install = {
-          disk  = "/dev/sda"
-          image = "factory.talos.dev/installer/${var.talos_factory_id}:v${var.talos_version}"
-        }
-        network = {
-          interfaces = [
-            # see https://www.talos.dev/v1.7/talos-guides/network/vip/
-            {
-              deviceSelector = {
-                busPath = "0*"
-              },
-              vip = {
-                ip = var.cluster_vip
-              }
-            }
-          ]
-        }
-      }
-    }),
+    each.value.device_type == "vm" ? yamlencode(local.vm_config_patch) : "",
+    each.value.device_type == "rpi" ? yamlencode(local.rpi_config_patch) : "",
+    yamlencode(local.controller_config_patch)
   ]
   depends_on = [
     proxmox_virtual_environment_vm.talos_node,
@@ -99,43 +141,14 @@ resource "talos_machine_configuration_apply" "hybrid" {
 
   client_configuration        = talos_machine_secrets.talos.client_configuration
   machine_configuration_input = data.talos_machine_configuration.controller.machine_configuration
-  endpoint                    = each.value.address
+  endpoint                    = each.value.bootstrap_ip
   node                        = each.value.address
   config_patches = [
-    yamlencode({
-      cluster = {
-        allowSchedulingOnControlPlanes = true,
-      },
-      machine = {
-        install = {
-          disk  = "/dev/sda"
-          image = "factory.talos.dev/installer/${var.talos_factory_id}:v${var.talos_version}"
-        }
-        network = {
-          interfaces = [
-            # see https://www.talos.dev/v1.7/talos-guides/network/vip/
-            {
-              deviceSelector = {
-                busPath = "0*"
-              },
-              vip = {
-                ip = var.cluster_vip
-              }
-            }
-          ]
-        },
-        kubelet = {
-          extraMounts = [{
-            destination = "/var/lib/longhorn",
-            type        = "bind",
-            source      = "/var/lib/longhorn"
-            options = [
-              "bind", "rshared", "rw",
-            ]
-          }]
-        }
-      }
-    }),
+    each.value.device_type == "vm" ? yamlencode(local.vm_config_patch) : "",
+    each.value.device_type == "rpi" ? yamlencode(local.rpi_config_patch) : "",
+    yamlencode(local.controller_config_patch),
+    yamlencode(local.hybrid_config_patch),
+    yamlencode(local.worker_config_patch)
   ]
   depends_on = [
     proxmox_virtual_environment_vm.talos_node,
@@ -147,30 +160,15 @@ resource "talos_machine_configuration_apply" "worker" {
 
   client_configuration        = talos_machine_secrets.talos.client_configuration
   machine_configuration_input = data.talos_machine_configuration.worker.machine_configuration
-  endpoint                    = each.value.address
+  endpoint                    = each.value.bootstrap_ip
   node                        = each.value.address
   depends_on = [
     proxmox_virtual_environment_vm.talos_node,
   ]
   config_patches = [
-    yamlencode({
-      machine = {
-        install = {
-          disk  = "/dev/sda"
-          image = "factory.talos.dev/installer/${var.talos_factory_id}:v${var.talos_version}"
-        },
-        kubelet = {
-          extraMounts = [{
-            destination = "/var/lib/longhorn",
-            type        = "bind",
-            source      = "/var/lib/longhorn"
-            options = [
-              "bind", "rshared", "rw",
-            ]
-          }]
-        }
-      }
-    })
+    each.value.device_type == "vm" ? yamlencode(local.vm_config_patch) : "",
+    each.value.device_type == "rpi" ? yamlencode(local.rpi_config_patch) : "",
+    yamlencode(local.worker_config_patch)
   ]
 }
 
