@@ -125,7 +125,7 @@ resource "talos_machine_configuration_apply" "controller" {
   client_configuration        = talos_machine_secrets.talos.client_configuration
   machine_configuration_input = data.talos_machine_configuration.controller.machine_configuration
   endpoint                    = each.value.bootstrap_ip
-  node                        = each.value.address
+  node                        = each.value.bootstrap_ip
   config_patches = [
     each.value.device_type == "vm" ? yamlencode(local.vm_config_patch) : "",
     each.value.device_type == "rpi" ? yamlencode(local.rpi_config_patch) : "",
@@ -155,7 +155,7 @@ resource "talos_machine_configuration_apply" "hybrid" {
   client_configuration        = talos_machine_secrets.talos.client_configuration
   machine_configuration_input = data.talos_machine_configuration.controller.machine_configuration
   endpoint                    = each.value.bootstrap_ip
-  node                        = each.value.address
+  node                        = each.value.bootstrap_ip
   config_patches = [
     each.value.device_type == "vm" ? yamlencode(local.vm_config_patch) : "",
     each.value.device_type == "rpi" ? yamlencode(local.rpi_config_patch) : "",
@@ -187,7 +187,7 @@ resource "talos_machine_configuration_apply" "worker" {
   client_configuration        = talos_machine_secrets.talos.client_configuration
   machine_configuration_input = data.talos_machine_configuration.worker.machine_configuration
   endpoint                    = each.value.bootstrap_ip
-  node                        = each.value.address
+  node                        = each.value.bootstrap_ip
   depends_on = [
     proxmox_virtual_environment_vm.talos_node,
   ]
