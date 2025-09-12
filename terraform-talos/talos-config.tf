@@ -1,14 +1,14 @@
 locals {
   all_nodes_complete = {
     for key, node_config in local.all_nodes :
-          key => merge(
-        node_config,
-        {
-          bootstrap_ip = can(node_config.bootstrap_ip) ? node_config.bootstrap_ip : node_config.address
-        }
-      )
-    }
-    controller_nodes = {
+    key => merge(
+      node_config,
+      {
+        bootstrap_ip = can(node_config.bootstrap_ip) ? node_config.bootstrap_ip : node_config.address
+      }
+    )
+  }
+  controller_nodes = {
     for key, node_config in local.all_nodes_complete : key => node_config
     if node_config.node_type == "controller"
   }
@@ -129,7 +129,20 @@ resource "talos_machine_configuration_apply" "controller" {
   config_patches = [
     each.value.device_type == "vm" ? yamlencode(local.vm_config_patch) : "",
     each.value.device_type == "rpi" ? yamlencode(local.rpi_config_patch) : "",
-    yamlencode(local.controller_config_patch)
+    yamlencode(local.controller_config_patch),
+    yamlencode({
+      network = {
+        hostname = each.key
+        interfaces = [
+          {
+            deviceSelector = {
+              busPath = "0*"
+            },
+            addresses = [each.value.address]
+          }
+        ]
+      },
+    })
   ]
   depends_on = [
     proxmox_virtual_environment_vm.talos_node,
@@ -148,7 +161,20 @@ resource "talos_machine_configuration_apply" "hybrid" {
     each.value.device_type == "rpi" ? yamlencode(local.rpi_config_patch) : "",
     yamlencode(local.controller_config_patch),
     yamlencode(local.hybrid_config_patch),
-    yamlencode(local.worker_config_patch)
+    yamlencode(local.worker_config_patch),
+    yamlencode({
+      network = {
+        hostname = each.key
+        interfaces = [
+          {
+            deviceSelector = {
+              busPath = "0*"
+            },
+            addresses = [each.value.address]
+          }
+        ]
+      },
+    })
   ]
   depends_on = [
     proxmox_virtual_environment_vm.talos_node,
@@ -168,7 +194,20 @@ resource "talos_machine_configuration_apply" "worker" {
   config_patches = [
     each.value.device_type == "vm" ? yamlencode(local.vm_config_patch) : "",
     each.value.device_type == "rpi" ? yamlencode(local.rpi_config_patch) : "",
-    yamlencode(local.worker_config_patch)
+    yamlencode(local.worker_config_patch),
+    yamlencode({
+      network = {
+        hostname = each.key
+        interfaces = [
+          {
+            deviceSelector = {
+              busPath = "0*"
+            },
+            addresses = [each.value.address]
+          }
+        ]
+      },
+    })
   ]
 }
 
