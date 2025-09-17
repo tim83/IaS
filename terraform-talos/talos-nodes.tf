@@ -8,7 +8,7 @@ locals {
             node_config,
             {
               address     = cidrhost(var.cluster_node_network, config_idx * 10 + node_idx + node_config.start_idx)
-              name        = "${node_config.node_type}-${config_idx * 10 + node_idx + node_config.start_idx}"
+              name        = "${var.prefix}-${node_config.node_type}-${config_idx * 10 + node_idx + node_config.start_idx}"
               idx         = config_idx * 10 + node_idx + node_config.start_idx
               device_type = "vm"
             }
@@ -24,7 +24,7 @@ locals {
         node_config,
         {
           address = cidrhost(var.cluster_node_network, 100 + node_idx)
-          name    = "${node_config.device_type}-${node_config.node_type}-${100 + node_idx}"
+          name    = "${var.prefix}-${node_config.device_type}-${node_config.node_type}-${100 + node_idx}"
           idx     = 100 + node_idx
         }
       )
@@ -54,7 +54,7 @@ resource "proxmox_virtual_environment_download_file" "talos" {
 resource "proxmox_virtual_environment_vm" "talos_node" {
   for_each = local.vm_nodes
 
-  name      = "${var.prefix}-${each.value.name}"
+  name      = each.value.name
   node_name = each.value.pve_node_name
   vm_id     = 800 + each.value.idx
 
@@ -108,7 +108,7 @@ resource "proxmox_virtual_environment_vm" "talos_node" {
   initialization {
     ip_config {
       ipv4 {
-        address = "${each.value.address}/16"
+        address = "${each.value.address}/32"
         gateway = var.cluster_node_network_gateway
       }
       ipv6 {

@@ -140,7 +140,16 @@ variable "metal_node_config" {
     node_type    = string
     bootstrap_ip = optional(string)
   }))
-  default = []
+  default = [
+    {
+      device_type  = "rpi"
+      node_type    = "controller"
+    },
+    {
+      device_type  = "rpi"
+      node_type    = "controller"
+    },
+  ]
 }
 
 variable "prefix" {
