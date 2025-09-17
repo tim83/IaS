@@ -1,45 +1,10 @@
 locals {
-  vm_config_patch = {
-    machine = {
-      install = {
-        disk  = "/dev/sda"
-        image = "factory.talos.dev/installer/${var.talos_factory_id}:v${var.talos_version}"
-
-      }
-    }
-  }
-  rpi_config_patch = {
-    machine = {
-      install = {
-        image = "factory.talos.dev/installer/${var.talos_rpi_factory_id}:v${var.talos_version}"
-
-      }
-    }
-  }
-  controller_config_patch = {
-    machine = {
-      network = {
-        interfaces = [
-          # see https://www.talos.dev/v1.7/talos-guides/network/vip/
-          {
-            deviceSelector = {
-              busPath = "0*"
-            },
-            vip = {
-              ip = var.cluster_vip
-            }
-          }
-        ]
-      },
-    }
-  }
-  hybrid_config_patch = {
-    machine = {
-      cluster = {
-        allowSchedulingOnControlPlanes = true,
-      },
-    }
-  }
+  vm_config_patch = { machine = { install = {
+    disk  = "/dev/sda"
+    image = "factory.talos.dev/installer/${var.talos_factory_id}:v${var.talos_version}"
+  }}}
+  rpi_config_patch = { machine = { install = { image = "factory.talos.dev/installer/${var.talos_rpi_factory_id}:v${var.talos_version}" }}}
+  hybrid_config_patch = { machine = { cluster = { allowSchedulingOnControlPlanes = true }}}
   worker_config_patch = {
     machine = {
       kubelet = {
@@ -70,20 +35,24 @@ locals {
                 hostname = node_config.name
                 interfaces = [
                   {
-                    deviceSelector = {
-                      busPath = "0*"
-                    },
-                    addresses = [node_config.address]
+                    deviceSelector  = { busPath = node_config.device_type == "rpi" ? "fd580000.ethernet" : "0*" },
+                    addresses       = ["${node_config.address}/16"]
+                    dhcp            = true
                   }
                 ]
               },
             }
           }),
-          node_config.device_type == "rpi" ? yamlencode(local.rpi_config_patch) : "",
-          node_config.device_type == "vm" ? yamlencode(local.vm_config_patch) : "",
-          node_config.node_type != "controller" ? yamlencode(local.worker_config_patch) : "",
-          node_config.node_type != "worker" ? yamlencode(local.controller_config_patch) : "",
-          node_config.node_type == "hybrid" ? yamlencode(local.hybrid_config_patch) : "",
+          node_config.device_type == "rpi"          ? yamlencode(local.rpi_config_patch)        : "",
+          node_config.device_type == "vm"           ? yamlencode(local.vm_config_patch)         : "",
+          node_config.node_type   == "hybrid"       ? yamlencode(local.hybrid_config_patch)     : "",
+          node_config.node_type   != "controller"   ? yamlencode(local.worker_config_patch)     : "",
+          node_config.node_type   != "worker"       ? yamlencode({ machine = { network = { interfaces = [
+            {
+              deviceSelector  = { busPath = node_config.device_type == "rpi" ? "fd580000.ethernet" : "0*" },
+              vip             = { ip = var.cluster_vip } 
+            }
+          ]}}}) : "",
         ])
       }
     )
@@ -154,7 +123,7 @@ resource "talos_machine_configuration_apply" "controller" {
   client_configuration        = talos_machine_secrets.talos.client_configuration
   machine_configuration_input = data.talos_machine_configuration.controller.machine_configuration
   endpoint                    = each.value.bootstrap_ip
-  node                        = each.value.address
+  node                        = each.value.bootstrap_ip
 
   config_patches = each.value.config_patches
   depends_on = [
@@ -168,7 +137,7 @@ resource "talos_machine_configuration_apply" "hybrid" {
   client_configuration        = talos_machine_secrets.talos.client_configuration
   machine_configuration_input = data.talos_machine_configuration.controller.machine_configuration
   endpoint                    = each.value.bootstrap_ip
-  node                        = each.value.address
+  node                        = each.value.bootstrap_ip
 
   config_patches = each.value.config_patches
   depends_on = [
@@ -182,7 +151,7 @@ resource "talos_machine_configuration_apply" "worker" {
   client_configuration        = talos_machine_secrets.talos.client_configuration
   machine_configuration_input = data.talos_machine_configuration.worker.machine_configuration
   endpoint                    = each.value.bootstrap_ip
-  node                        = each.value.address
+  node                        = each.value.bootstrap_ip
   depends_on = [
     proxmox_virtual_environment_vm.talos_node,
   ]
