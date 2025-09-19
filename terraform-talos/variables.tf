@@ -83,7 +83,7 @@ variable "vm_node_config" {
       start_idx     = 0
       count         = 1
       cpu_count     = 2
-      max_ram_gb    = 16
+      max_ram_gb    = 8
       disk_size     = 60
     },
     {
@@ -128,7 +128,7 @@ variable "vm_node_config" {
       start_idx     = 0
       count         = 1
       cpu_count     = 1
-      max_ram_gb    = 4
+      max_ram_gb    = 12
       disk_size     = 150
     },
   ]
