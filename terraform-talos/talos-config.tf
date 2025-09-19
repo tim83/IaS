@@ -2,9 +2,9 @@ locals {
   vm_config_patch = { machine = { install = {
     disk  = "/dev/sda"
     image = "factory.talos.dev/installer/${var.talos_factory_id}:v${var.talos_version}"
-  }}}
-  rpi_config_patch = { machine = { install = { image = "factory.talos.dev/installer/${var.talos_rpi_factory_id}:v${var.talos_version}" }}}
-  hybrid_config_patch = { machine = { cluster = { allowSchedulingOnControlPlanes = true }}}
+  } } }
+  rpi_config_patch    = { machine = { install = { image = "factory.talos.dev/installer/${var.talos_rpi_factory_id}:v${var.talos_version}" } } }
+  hybrid_config_patch = { machine = { cluster = { allowSchedulingOnControlPlanes = true } } }
   worker_config_patch = {
     machine = {
       kubelet = {
@@ -27,7 +27,7 @@ locals {
     key => merge(
       node_config,
       {
-        bootstrap_ip = can(node_config.bootstrap_ip) ? node_config.bootstrap_ip : node_config.address
+        bootstrap_ip = (can(node_config.bootstrap_ip) && node_config.bootstrap_ip != null) ? node_config.bootstrap_ip : node_config.address
         config_patches = compact([
           yamlencode({
             machine = {
@@ -35,24 +35,24 @@ locals {
                 hostname = node_config.name
                 interfaces = [
                   {
-                    deviceSelector  = { busPath = node_config.device_type == "rpi" ? "fd580000.ethernet" : "0*" },
-                    addresses       = ["${node_config.address}/16"]
-                    dhcp            = true
+                    deviceSelector = { busPath = node_config.device_type == "rpi" ? "fd580000.ethernet" : "0*" },
+                    addresses      = ["${node_config.address}/16"]
+                    dhcp           = true
                   }
                 ]
               },
             }
           }),
-          node_config.device_type == "rpi"          ? yamlencode(local.rpi_config_patch)        : "",
-          node_config.device_type == "vm"           ? yamlencode(local.vm_config_patch)         : "",
-          node_config.node_type   == "hybrid"       ? yamlencode(local.hybrid_config_patch)     : "",
-          node_config.node_type   != "controller"   ? yamlencode(local.worker_config_patch)     : "",
-          node_config.node_type   != "worker"       ? yamlencode({ machine = { network = { interfaces = [
+          node_config.device_type == "rpi" ? yamlencode(local.rpi_config_patch) : "",
+          node_config.device_type == "vm" ? yamlencode(local.vm_config_patch) : "",
+          node_config.node_type == "hybrid" ? yamlencode(local.hybrid_config_patch) : "",
+          node_config.node_type != "controller" ? yamlencode(local.worker_config_patch) : "",
+          node_config.node_type != "worker" ? yamlencode({ machine = { network = { interfaces = [
             {
-              deviceSelector  = { busPath = node_config.device_type == "rpi" ? "fd580000.ethernet" : "0*" },
-              vip             = { ip = var.cluster_vip } 
+              deviceSelector = { busPath = node_config.device_type == "rpi" ? "fd580000.ethernet" : "0*" },
+              vip            = { ip = var.cluster_vip }
             }
-          ]}}}) : "",
+          ] } } }) : "",
         ])
       }
     )
