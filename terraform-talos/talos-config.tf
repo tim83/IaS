@@ -3,7 +3,10 @@ locals {
     disk  = "/dev/sda"
     image = "factory.talos.dev/installer/${var.talos_factory_id}:v${var.talos_version}"
   } } }
-  rpi_config_patch    = { machine = { install = { image = "factory.talos.dev/installer/${var.talos_rpi_factory_id}:v${var.talos_version}" } } }
+  rpi_config_patch = { machine = { install = {
+    disk  = "/dev/mmcblk0"
+    image = "factory.talos.dev/installer/${var.talos_rpi_factory_id}:v${var.talos_version}"
+  } } }
   hybrid_config_patch = { machine = { cluster = { allowSchedulingOnControlPlanes = true } } }
   worker_config_patch = {
     machine = {
