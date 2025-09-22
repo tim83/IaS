@@ -102,9 +102,6 @@ resource "proxmox_virtual_environment_vm" "talos_node" {
     enabled = true
     trim    = true
   }
-  startup {
-    order = each.value.node_type == "controller" ? "20" : "30"
-  }
   initialization {
     ip_config {
       ipv4 {
