@@ -45,6 +45,18 @@ locals {
                 ]
               },
             }
+            cluster = {
+              network = {
+                podSubnets = [
+                  "10.244.0.0/16",
+                  "fd00:10:244::/56"
+                ]
+                serviceSubnets = [
+                  "10.96.0.0/12",
+                  "fd00:10:96::/112"
+                ]
+              }
+            }
           }),
           node_config.device_type == "rpi" ? yamlencode(local.rpi_config_patch) : "",
           node_config.device_type == "vm" ? yamlencode(local.vm_config_patch) : "",
