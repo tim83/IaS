@@ -23,7 +23,7 @@ locals {
       "${node_config.device_type}-${node_config.node_type}-${100 + node_idx}" = merge(
         node_config,
         {
-          address = cidrhost(var.cluster_node_network, 100 + node_idx)
+          address = cidrhost(var.cluster_node_network, 100 + node_idx + (node_config.node_type == "worker" ? 10 : 0))
           name    = "${var.prefix}-${node_config.device_type}-${node_config.node_type}-${100 + node_idx}"
           idx     = 100 + node_idx
         }

@@ -81,7 +81,7 @@ variable "vm_node_config" {
       pve_node_name = "thinkcentre"
       node_type     = "controller"
       start_idx     = 0
-      count         = 1
+      count         = 0
       cpu_count     = 2
       max_ram_gb    = 8
       disk_size     = 60
@@ -127,9 +127,9 @@ variable "vm_node_config" {
       node_type     = "worker"
       start_idx     = 0
       count         = 1
-      cpu_count     = 1
-      max_ram_gb    = 12
-      disk_size     = 150
+      cpu_count     = 3
+      max_ram_gb    = 18
+      disk_size     = 170
     },
   ]
 }
@@ -143,6 +143,8 @@ variable "metal_node_config" {
   default = [
     { device_type = "rpi", node_type = "controller" },
     { device_type = "rpi", node_type = "controller" },
+    { device_type = "rpi", node_type = "controller" },
+    # { device_type = "rpi", node_type = "worker", bootstrap_ip = "192.168.178." },
   ]
 }
 
