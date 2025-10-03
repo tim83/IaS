@@ -11,7 +11,7 @@ locals {
   worker_config_patch = {
     machine = {
       sysctls = {
-        vm.nr_hugepages = "1024"
+        vm = { nr_hugepages = "1024" }
       }
       kernel = {
         modules = [
