@@ -22,12 +22,12 @@ variable "talos_version" {
 
 variable "talos_factory_id" {
   type    = string
-  default = "88d1f7a5c4f1d3aba7df787c448c1d3d008ed29cfb34af53fa0df4336a56040b"
+  default = "613e1592b2da41ae5e265e8789429f22e121aab91cb4deb6bc3c0b6262961245"
 }
 
 variable "talos_rpi_factory_id" {
   type    = string
-  default = "f47e6cd2634c7a96988861031bcc4144468a1e3aef82cca4f5b5ca3fffef778a"
+  default = "f8a903f101ce10f686476024898734bb6b36353cc4d41f348514db9004ec0a9d"
 }
 
 # see https://github.com/siderolabs/kubelet/pkgs/container/kubelet
