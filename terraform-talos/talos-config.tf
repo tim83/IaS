@@ -46,12 +46,12 @@ locals {
     name       = "longhorn"
     provisioning = {
       diskSelector = {
-        match = "disk.size-gte=90GiB"
+        match = "disk.transport == 'usb' || disk.transport == 'sata'"
       }
       maxSize = "200GiB"
-      filesystem = {
-        type = "xfs"
-      }
+    }
+    filesystem = {
+      type = "xfs"
     }
   }
 }
