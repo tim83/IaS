@@ -18,19 +18,20 @@ locals {
     ]
     ])...
   )
-  metal_nodes = merge([
-    for node_idx, node_config in var.metal_node_config : {
-      "${node_config.device_type}-${node_config.node_type}-${100 + node_idx}" = merge(
-        node_config,
-        {
-          address = cidrhost(var.cluster_node_network, 100 + node_idx + (node_config.node_type == "worker" ? 10 : 0))
-          name    = "${var.prefix}-${node_config.device_type}-${node_config.node_type}-${100 + node_idx}"
-          idx     = 100 + node_idx
-        }
-      )
-    }
-    ]...
-  )
+  metal_nodes = merge(flatten([
+    for node_type_idx, node_type in ["controller", "worker", "hybrid"] : [
+      for node_idx, node_config in [for node_config in var.metal_node_config : node_config if node_config.node_type == node_type] : {
+        "${node_config.device_type}-${node_config.node_type}-${100 + node_idx + 10 * node_type_idx}" = merge(
+          node_config,
+          {
+            address = cidrhost(var.cluster_node_network, 100 + node_idx + 10 * node_type_idx)
+            name    = "${var.prefix}-${node_config.device_type}-${node_config.node_type}-${100 + node_idx + 10 * node_type_idx}"
+            idx     = 100 + node_idx + 10 * node_type_idx
+          }
+        )
+      }
+    ]
+  ])...)
 }
 locals {
   all_nodes = merge(local.vm_nodes, local.metal_nodes)
