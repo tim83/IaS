@@ -144,7 +144,7 @@ variable "metal_node_config" {
     { device_type = "rpi", node_type = "controller" },
     { device_type = "rpi", node_type = "controller" },
     { device_type = "rpi", node_type = "controller" },
-    # { device_type = "rpi", node_type = "worker", bootstrap_ip = "192.168.178." },
+    { device_type = "rpi", node_type = "worker" },
   ]
 }
 
