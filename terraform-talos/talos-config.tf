@@ -20,15 +20,37 @@ locals {
         ]
       }
       kubelet = {
-        extraMounts = [{
-          destination = "/var/lib/longhorn",
-          type        = "bind",
-          source      = "/var/lib/longhorn"
-          options = [
-            "bind", "rshared", "rw",
-          ]
-          }
+        extraMounts = [
+          {
+            destination = "/var/mnt/longhorn",
+            type        = "bind",
+            source      = "/var/mnt/longhorn"
+            options = [
+              "bind", "rshared", "rw",
+            ]
+            }, {
+            destination = "/var/lib/longhorn",
+            type        = "bind",
+            source      = "/var/lib/longhorn"
+            options = [
+              "bind", "rshared", "rw",
+            ]
+          },
         ]
+      }
+    }
+  }
+  rpi_worker_config_patch = {
+    apiVersion = "v1alpha1"
+    kind       = "UserVolumeConfig"
+    name       = "longhorn"
+    provisioning = {
+      diskSelector = {
+        match = "disk.size-gte=90GiB"
+      }
+      maxSize = "200GiB"
+      filesystem = {
+        type = "xfs"
       }
     }
   }
@@ -65,6 +87,7 @@ locals {
               vip            = { ip = var.cluster_vip }
             }
           ] } } }) : "",
+          node_config.node_type != "controller" && node_config.device_type == "rpi" ? yamlencode(local.rpi_worker_config_patch) : "",
         ])
       }
     )
