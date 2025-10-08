@@ -79,21 +79,12 @@ variable "vm_node_config" {
   default = [
     {
       pve_node_name = "thinkcentre"
-      node_type     = "controller"
-      start_idx     = 0
-      count         = 0
-      cpu_count     = 2
-      max_ram_gb    = 8
-      disk_size     = 60
-    },
-    {
-      pve_node_name = "thinkcentre"
       node_type     = "worker"
       start_idx     = 0
-      count         = 1
-      cpu_count     = 10
-      max_ram_gb    = 32
-      disk_size     = 350
+      count         = 2
+      cpu_count     = 6
+      max_ram_gb    = 22
+      disk_size     = 250
     },
     {
       pve_node_name = "coolermater"
@@ -102,34 +93,7 @@ variable "vm_node_config" {
       count         = 1
       cpu_count     = 1
       max_ram_gb    = 4
-      disk_size     = 450
-    },
-    {
-      pve_node_name = "coolermater"
-      node_type     = "hybrid"
-      start_idx     = 0
-      count         = 0
-      cpu_count     = 3
-      max_ram_gb    = 11
-      disk_size     = 350
-    },
-    {
-      pve_node_name = "coolermater"
-      node_type     = "controller"
-      start_idx     = 0
-      count         = 0
-      cpu_count     = 1
-      max_ram_gb    = 2
-      disk_size     = 60
-    },
-    {
-      pve_node_name = "thinkcentre"
-      node_type     = "worker"
-      start_idx     = 0
-      count         = 1
-      cpu_count     = 3
-      max_ram_gb    = 18
-      disk_size     = 170
+      disk_size     = 400
     },
   ]
 }
