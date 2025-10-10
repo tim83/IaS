@@ -70,7 +70,7 @@ variable "vm_node_config" {
   type = list(object({
     pve_node_name = string
     node_type     = string
-    start_idx     = number
+    start_idx     = optional(number, 0)
     count         = number
     cpu_count     = number
     max_ram_gb    = number
@@ -80,7 +80,6 @@ variable "vm_node_config" {
     {
       pve_node_name = "thinkcentre"
       node_type     = "worker"
-      start_idx     = 0
       count         = 2
       cpu_count     = 6
       max_ram_gb    = 22
@@ -89,7 +88,6 @@ variable "vm_node_config" {
     {
       pve_node_name = "coolermater"
       node_type     = "worker"
-      start_idx     = 0
       count         = 1
       cpu_count     = 1
       max_ram_gb    = 4
