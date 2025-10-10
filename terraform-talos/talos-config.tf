@@ -25,34 +25,22 @@ locals {
             destination = "/var/mnt/longhorn",
             type        = "bind",
             source      = "/var/mnt/longhorn"
-            options = [
-              "bind", "rshared", "rw",
-            ]
-            }, {
-            destination = "/var/lib/longhorn",
-            type        = "bind",
-            source      = "/var/lib/longhorn"
-            options = [
-              "bind", "rshared", "rw",
-            ]
-          },
+            options     = ["bind", "rshared", "rw"]
+          }
         ]
       }
     }
   }
-  rpi_worker_config_patch = {
+  worker_volume_config_patch = {
     apiVersion = "v1alpha1"
     kind       = "UserVolumeConfig"
     name       = "longhorn"
     provisioning = {
-      diskSelector = {
-        match = "disk.transport == 'usb' || disk.transport == 'sata'"
-      }
-      maxSize = "200GiB"
+      diskSelector = { match = "!system_disk" }
+      maxSize      = "200GiB"
+      minSize      = "100GiB"
     }
-    filesystem = {
-      type = "xfs"
-    }
+    filesystem = { type = "xfs" }
   }
 }
 locals {
@@ -81,13 +69,13 @@ locals {
           node_config.device_type == "vm" ? yamlencode(local.vm_config_patch) : "",
           node_config.node_type == "hybrid" ? yamlencode(local.hybrid_config_patch) : "",
           node_config.node_type != "controller" ? yamlencode(local.worker_config_patch) : "",
+          node_config.node_type != "controller" ? yamlencode(local.worker_volume_config_patch) : "",
           node_config.node_type != "worker" ? yamlencode({ machine = { network = { interfaces = [
             {
               deviceSelector = { busPath = node_config.device_type == "rpi" ? "fd580000.ethernet" : "0*" },
               vip            = { ip = var.cluster_vip }
             }
           ] } } }) : "",
-          node_config.node_type != "controller" && node_config.device_type == "rpi" ? yamlencode(local.rpi_worker_config_patch) : "",
         ])
       }
     )
