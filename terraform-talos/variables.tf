@@ -22,7 +22,7 @@ variable "talos_version" {
 
 variable "talos_factory_id" {
   type    = string
-  default = "613e1592b2da41ae5e265e8789429f22e121aab91cb4deb6bc3c0b6262961245"
+  default = "88d1f7a5c4f1d3aba7df787c448c1d3d008ed29cfb34af53fa0df4336a56040b"
 }
 
 variable "talos_rpi_factory_id" {
