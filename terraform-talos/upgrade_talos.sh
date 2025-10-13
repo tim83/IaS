@@ -6,7 +6,7 @@ talos_vm_factory_id=$(echo "var.talos_factory_id" | tofu console | jq -r)
 talos_rpi_factory_id=$(echo "var.talos_rpi_factory_id" | tofu console | jq -r)
 k8s_version=$(echo "var.kubernetes_version" | tofu console | jq -r)
 
-talos_vm_image="factory.talos.dev/nocloud-installer/${talos_vm_factory_id}:v${talos_version}"
+talos_vm_image="factory.talos.dev/nocloud-installer-secureboot/${talos_vm_factory_id}:v${talos_version}"
 talos_rpi_image="factory.talos.dev/metal-installer/${talos_rpi_factory_id}:v${talos_version}"
 
 nodes=$(talosctl get members -n $control_node -o json)
