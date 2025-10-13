@@ -31,7 +31,7 @@ locals {
       }
     }
   }
-  worker_volume_config_patch = {
+  longhorn_volume_config_patch = {
     apiVersion = "v1alpha1"
     kind       = "UserVolumeConfig"
     name       = "longhorn"
@@ -41,6 +41,16 @@ locals {
       minSize      = "100GiB"
     }
     filesystem = { type = "xfs" }
+  }
+  cnpg_volume_config_patch = {
+    apiVersion = "v1alpha1"
+    kind       = "UserVolumeConfig"
+    name       = "local-storage"
+    provisioning = {
+      diskSelector = { match = "!system_disk" }
+      maxSize      = "15GiB"
+      minSize      = "5GiB"
+    }
   }
 }
 locals {
@@ -74,7 +84,8 @@ locals {
           node_config.device_type == "vm" ? yamlencode(local.vm_config_patch) : "",
           node_config.node_type == "hybrid" ? yamlencode(local.hybrid_config_patch) : "",
           node_config.node_type != "controller" ? yamlencode(local.worker_config_patch) : "",
-          node_config.node_type != "controller" ? yamlencode(local.worker_volume_config_patch) : "",
+          node_config.node_type != "controller" ? yamlencode(local.longhorn_volume_config_patch) : "",
+          node_config.node_type != "controller" ? yamlencode(local.cnpg_volume_config_patch) : "",
           node_config.node_type != "worker" ? yamlencode({ machine = { network = { interfaces = [
             {
               deviceSelector = { busPath = node_config.device_type == "rpi" ? "fd580000.ethernet" : "0*" },
