@@ -80,7 +80,7 @@ variable "vm_node_config" {
     {
       pve_node_name = "thinkcentre"
       node_type     = "worker"
-      count         = 1
+      count         = 2
       cpu_count     = 5
       max_ram_gb    = 20
       disk_size     = 250
