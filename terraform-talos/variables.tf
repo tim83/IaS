@@ -80,15 +80,15 @@ variable "vm_node_config" {
     {
       pve_node_name = "thinkcentre"
       node_type     = "worker"
-      count         = 2
-      cpu_count     = 6
-      max_ram_gb    = 22
+      count         = 1
+      cpu_count     = 5
+      max_ram_gb    = 20
       disk_size     = 250
     },
     {
       pve_node_name = "coolermater"
       node_type     = "worker"
-      count         = 1
+      count         = 0
       cpu_count     = 1
       max_ram_gb    = 4
       disk_size     = 400
