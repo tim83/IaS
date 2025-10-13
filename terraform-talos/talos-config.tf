@@ -10,15 +10,15 @@ locals {
   hybrid_config_patch = { machine = { cluster = { allowSchedulingOnControlPlanes = true } } }
   worker_config_patch = {
     machine = {
-      sysctls = {
-        "vm.nr_hugepages" = "1024"
-      }
-      kernel = {
-        modules = [
-          { name = "nvme_tcp" },
-          { name = "vfio_pci" },
-        ]
-      }
+      # sysctls = {
+      #   "vm.nr_hugepages" = "1024"
+      # }
+      # kernel = {
+      #   modules = [
+      #     { name = "nvme_tcp" },
+      #     { name = "vfio_pci" },
+      #   ]
+      # }
       kubelet = {
         extraMounts = [
           {
