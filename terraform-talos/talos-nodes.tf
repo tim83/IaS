@@ -110,7 +110,7 @@ resource "proxmox_virtual_environment_vm" "talos_node" {
   initialization {
     ip_config {
       ipv4 {
-        address = "${each.value.address}/16"
+        address = "${each.value.address}/17"
         gateway = var.cluster_node_network_gateway
       }
       ipv6 {

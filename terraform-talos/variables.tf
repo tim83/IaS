@@ -57,7 +57,7 @@ variable "cluster_vip" {
 variable "cluster_node_network_gateway" {
   description = "The IP network gateway of the cluster nodes"
   type        = string
-  default     = "192.168.0.1"
+  default     = "192.168.1.1"
 }
 
 variable "cluster_node_network" {
