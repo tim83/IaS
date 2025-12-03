@@ -69,14 +69,9 @@ locals {
                   {
                     deviceSelector = { busPath = node_config.device_type == "rpi" ? "fd580000.ethernet" : "0*" },
                     addresses      = ["${node_config.address}/17"]
-                    dhcp           = false
-                    routes = [{
-                      network = "0.0.0.0/0"
-                      gateway = "192.168.0.1"
-                    }]
+                    dhcp           = true
                   }
                 ]
-                nameservers = ["192.168.0.1", "1.1.1.1", "8.8.8.8"]
               },
             }
           }),
