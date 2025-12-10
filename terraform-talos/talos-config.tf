@@ -55,8 +55,8 @@ locals {
 }
 locals {
   all_nodes_complete = {
-    for key, node_config in local.all_nodes :
-    key => merge(
+    for idx, node_config in local.all_nodes :
+    node_config.key => merge(
       node_config,
       {
         bootstrap_ip = (can(node_config.bootstrap_ip) && node_config.bootstrap_ip != null) ? node_config.bootstrap_ip : node_config.address

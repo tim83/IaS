@@ -51,19 +51,19 @@ variable "cluster_name" {
 variable "cluster_vip" {
   description = "A name to provide for the Talos cluster"
   type        = string
-  default     = "192.168.0.100"
+  default     = "10.30.2.200"
 }
 
 variable "cluster_node_network_gateway" {
   description = "The IP network gateway of the cluster nodes"
   type        = string
-  default     = "192.168.0.1"
+  default     = "10.30.2.1"
 }
 
 variable "cluster_node_network" {
   description = "The IP network prefix of the cluster nodes"
   type        = string
-  default     = "192.168.40.0/24"
+  default     = "10.30.2.32/28"
 }
 
 variable "vm_node_config" {
@@ -84,14 +84,6 @@ variable "vm_node_config" {
       cpu_count     = 5
       max_ram_gb    = 20
       disk_size     = 250
-    },
-    {
-      pve_node_name = "coolermater"
-      node_type     = "worker"
-      count         = 0
-      cpu_count     = 1
-      max_ram_gb    = 4
-      disk_size     = 400
     },
   ]
 }

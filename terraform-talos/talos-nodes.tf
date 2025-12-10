@@ -1,40 +1,47 @@
 locals {
   pve_nodes = toset([for config in var.vm_node_config : config.pve_node_name])
-  vm_nodes = merge(flatten([
+  _vm_nodes = flatten([
     for config_idx, node_config in var.vm_node_config : [
       for node_idx in range(node_config.count) : [
-        {
-          "${node_config.pve_node_name}-${node_config.node_type}-${config_idx * 10 + node_idx + node_config.start_idx}" = merge(
-            node_config,
-            {
-              address     = cidrhost(var.cluster_node_network, config_idx * 10 + node_idx + node_config.start_idx)
-              name        = "${var.prefix}-${node_config.node_type}-${config_idx * 10 + node_idx + node_config.start_idx}"
-              idx         = config_idx * 10 + node_idx + node_config.start_idx
-              device_type = "vm"
-            }
-          )
-        }
-      ]
-    ]
-    ])...
-  )
-  metal_nodes = merge(flatten([
-    for node_type_idx, node_type in ["controller", "worker", "hybrid"] : [
-      for node_idx, node_config in [for node_config in var.metal_node_config : node_config if node_config.node_type == node_type] : {
-        "${node_config.device_type}-${node_config.node_type}-${100 + node_idx + 10 * node_type_idx}" = merge(
+        merge(
           node_config,
           {
-            address = cidrhost(var.cluster_node_network, 100 + node_idx + 10 * node_type_idx)
-            name    = "${var.prefix}-${node_config.device_type}-${node_config.node_type}-${100 + node_idx + 10 * node_type_idx}"
-            idx     = 100 + node_idx + 10 * node_type_idx
+            device_type = "vm"
+            key         = "${node_config.pve_node_name}-${node_config.node_type}-${config_idx * 10 + node_idx + node_config.start_idx}"
+            vm_id       = 800 + config_idx * 10 + node_idx + node_config.start_idx
           }
         )
-      }
+      ]
     ]
-  ])...)
+  ])
+  _metal_nodes = flatten([
+    for node_type_idx, node_type in ["controller", "worker", "hybrid"] : [
+      for node_idx, node_config in [for node_config in var.metal_node_config : node_config if node_config.node_type == node_type] : [
+        merge(
+          node_config,
+          {
+            key = "${node_config.device_type}-${node_config.node_type}-${100 + node_idx + 10 * node_type_idx}"
+          }
+        )
+      ]
+    ]
+  ])
 }
 locals {
-  all_nodes = merge(local.vm_nodes, local.metal_nodes)
+  all_nodes = [
+    for idx, node_config in concat(local._metal_nodes, local._vm_nodes) : merge(
+      node_config,
+      {
+        name    = "${var.cluster_name}-${node_config.node_type}-${idx}",
+        address = cidrhost(var.cluster_node_network, idx),
+        idx     = idx + (can(node_config.start_idx) ? node_config.start_idx : 0),
+      }
+    )
+  ]
+  vm_nodes = {
+    for idx, node_config in local.all_nodes : node_config.key => node_config
+    if node_config.device_type == "vm"
+  }
 }
 
 # see https://registry.terraform.io/providers/bpg/proxmox/0.60.0/docs/resources/virtual_environment_file
@@ -57,7 +64,7 @@ resource "proxmox_virtual_environment_vm" "talos_node" {
 
   name      = each.value.name
   node_name = each.value.pve_node_name
-  vm_id     = 800 + each.value.idx
+  vm_id     = each.value.vm_id
 
   tags            = sort(["talos", "terraform", each.value.node_type])
   stop_on_destroy = true
