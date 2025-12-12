@@ -68,7 +68,7 @@ locals {
                 interfaces = [
                   {
                     deviceSelector = { busPath = node_config.device_type == "rpi" ? "fd580000.ethernet" : "0*" },
-                    addresses      = ["${node_config.address}/17"]
+                    addresses      = ["${node_config.address}/24"]
                     dhcp           = true
                   }
                 ]
