@@ -43,7 +43,7 @@ provider "proxmox" {
 
     node {
       name    = "thinkcentre"
-      address = "192.168.20.1"
+      address = "10.30.2.10"
     }
   }
 }
