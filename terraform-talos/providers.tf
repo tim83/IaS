@@ -53,7 +53,7 @@ provider "talos" {
 
 provider "flux" {
   kubernetes = {
-    host                   = resource.talos_cluster_kubeconfig.talos.kubernetes_client_configuration.host
+    host                   = "https://10.30.2.200:6443" # resource.talos_cluster_kubeconfig.talos.kubernetes_client_configuration.host
     client_certificate     = base64decode(resource.talos_cluster_kubeconfig.talos.kubernetes_client_configuration.client_certificate)
     client_key             = base64decode(resource.talos_cluster_kubeconfig.talos.kubernetes_client_configuration.client_key)
     cluster_ca_certificate = base64decode(resource.talos_cluster_kubeconfig.talos.kubernetes_client_configuration.ca_certificate)
@@ -68,7 +68,7 @@ provider "flux" {
 }
 
 provider "kubernetes" {
-  host                   = resource.talos_cluster_kubeconfig.talos.kubernetes_client_configuration.host
+  host                   = "https://10.30.2.200:6443" # resource.talos_cluster_kubeconfig.talos.kubernetes_client_configuration.host
   client_certificate     = base64decode(resource.talos_cluster_kubeconfig.talos.kubernetes_client_configuration.client_certificate)
   client_key             = base64decode(resource.talos_cluster_kubeconfig.talos.kubernetes_client_configuration.client_key)
   cluster_ca_certificate = base64decode(resource.talos_cluster_kubeconfig.talos.kubernetes_client_configuration.ca_certificate)
