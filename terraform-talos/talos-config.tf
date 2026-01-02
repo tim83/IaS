@@ -64,7 +64,6 @@ locals {
           yamlencode({
             machine = {
               network = {
-                hostname = node_config.name
                 interfaces = [
                   {
                     deviceSelector = { busPath = node_config.device_type == "rpi" ? "fd580000.ethernet" : "0*" },
@@ -87,6 +86,7 @@ locals {
               vip            = { ip = var.cluster_vip }
             }
           ] } } }) : "",
+          yamlencode({ apiVersion = "v1alpha1", kind = "HostnameConfig", hostname = node_config.name, auto = "off" }),
         ])
       }
     )
