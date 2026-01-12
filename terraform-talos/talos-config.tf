@@ -48,8 +48,9 @@ locals {
     name       = "local-storage"
     provisioning = {
       diskSelector = { match = "!system_disk" }
-      maxSize      = "15GiB"
+      maxSize      = "20GiB"
       minSize      = "5GiB"
+      grow         = true
     }
   }
 }
