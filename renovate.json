@@ -36,6 +36,10 @@
       "matchDatasources": ["github-releases"],
       "matchDepNames": ["hashicorp/terraform"],
       "enabled": false
+    },
+    {
+      "matchDepNames": ["opentofu/opentofu"],
+      "minimumReleaseAge": "60 days"
     }
   ]
 }
