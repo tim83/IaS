@@ -10,15 +10,6 @@ locals {
   hybrid_config_patch = { machine = { cluster = { allowSchedulingOnControlPlanes = true } } }
   worker_config_patch = {
     machine = {
-      # sysctls = {
-      #   "vm.nr_hugepages" = "1024"
-      # }
-      # kernel = {
-      #   modules = [
-      #     { name = "nvme_tcp" },
-      #     { name = "vfio_pci" },
-      #   ]
-      # }
       kubelet = {
         extraMounts = [
           {
@@ -41,17 +32,6 @@ locals {
       minSize      = "100GiB"
     }
     filesystem = { type = "xfs" }
-  }
-  cnpg_volume_config_patch = {
-    apiVersion = "v1alpha1"
-    kind       = "UserVolumeConfig"
-    name       = "local-storage"
-    provisioning = {
-      diskSelector = { match = "!system_disk" }
-      maxSize      = "20GiB"
-      minSize      = "5GiB"
-      grow         = true
-    }
   }
 }
 locals {
@@ -80,7 +60,6 @@ locals {
           node_config.node_type == "hybrid" ? yamlencode(local.hybrid_config_patch) : "",
           node_config.node_type != "controller" ? yamlencode(local.worker_config_patch) : "",
           node_config.node_type != "controller" ? yamlencode(local.longhorn_volume_config_patch) : "",
-          node_config.node_type != "controller" ? yamlencode(local.cnpg_volume_config_patch) : "",
           node_config.node_type != "worker" ? yamlencode({ machine = { network = { interfaces = [
             {
               deviceSelector = { busPath = node_config.device_type == "rpi" ? "fd580000.ethernet" : "0*" },
