@@ -11,7 +11,6 @@ talos_rpi_image="factory.talos.dev/metal-installer/${talos_rpi_factory_id}:v${ta
 
 nodes=$(talosctl get members -n $control_node -o json)
 for hostname in $(echo $nodes | jq -r ".spec|if .operatingSystem|contains(\"${talos_version}\")|not then . else null end|.hostname" | grep -v null) ; do
-    echo "$hostname"
     if [[ $(talosctl -n $hostname get disk) =~ "mmcblk" ]]; then
         talos_image=$talos_rpi_image
     else
