@@ -1,12 +1,22 @@
 locals {
-  vm_config_patch = { machine = { install = {
-    disk  = "/dev/sda"
-    image = "factory.talos.dev/nocloud-installer-secureboot/${var.talos_factory_id}:v${var.talos_version}"
-  } } }
-  rpi_config_patch = { machine = { install = {
-    disk  = "/dev/mmcblk0"
-    image = "factory.talos.dev/metal-installer/${var.talos_rpi_factory_id}:v${var.talos_version}"
-  } } }
+  vm_config_patch = { machine = {
+    install = {
+      disk  = "/dev/sda"
+      image = "factory.talos.dev/nocloud-installer-secureboot/${var.talos_factory_id}:v${var.talos_version}"
+    }
+    nodeAnnotations = {
+      "tuppr.home-operations.com/schematic" = var.talos_factory_id
+    }
+  } }
+  rpi_config_patch = { machine = {
+    install = {
+      disk  = "/dev/mmcblk0"
+      image = "factory.talos.dev/metal-installer/${var.talos_rpi_factory_id}:v${var.talos_version}"
+    }
+    nodeAnnotations = {
+      "tuppr.home-operations.com/schematic" = var.talos_rpi_factory_id
+    }
+  } }
   hybrid_config_patch = { machine = { cluster = { allowSchedulingOnControlPlanes = true } } }
   worker_config_patch = {
     machine = {
@@ -67,7 +77,7 @@ locals {
             }
           ] } } }) : "",
           yamlencode({ apiVersion = "v1alpha1", kind = "HostnameConfig", hostname = node_config.name, auto = "off" }),
-          yamlencode({ # Needed for system-upgrade controller (tuppr)
+          node_config.node_type != "worker" ? yamlencode({ # Needed for system-upgrade controller (tuppr)
             machine = {
               features = {
                 kubernetesTalosAPIAccess = {
@@ -80,11 +90,8 @@ locals {
                   enabled = true
                 }
               }
-              nodeAnnotations = {
-                "tuppr.home-operations.com/schematic" = node_config.device_type == "rpi" ? var.talos_rpi_factory_id : var.talos_factory_id
-              }
             }
-          })
+          }) : "",
         ])
       }
     )
