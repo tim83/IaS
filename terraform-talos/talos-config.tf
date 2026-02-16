@@ -67,6 +67,19 @@ locals {
             }
           ] } } }) : "",
           yamlencode({ apiVersion = "v1alpha1", kind = "HostnameConfig", hostname = node_config.name, auto = "off" }),
+          yamlencode({ # Needed for system-upgrade controller (tuppr)
+            machine = { features = {
+              kubernetesTalosAPIAccess = {
+                allowedKubernetesNamespaces = [
+                  "system-upgrade"
+                ]
+                allowedRoles = [
+                  "os:admin"
+                ]
+                enabled = true
+              }
+            } }
+          })
         ])
       }
     )
