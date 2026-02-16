@@ -68,17 +68,22 @@ locals {
           ] } } }) : "",
           yamlencode({ apiVersion = "v1alpha1", kind = "HostnameConfig", hostname = node_config.name, auto = "off" }),
           yamlencode({ # Needed for system-upgrade controller (tuppr)
-            machine = { features = {
-              kubernetesTalosAPIAccess = {
-                allowedKubernetesNamespaces = [
-                  "system-upgrade"
-                ]
-                allowedRoles = [
-                  "os:admin"
-                ]
-                enabled = true
+            machine = {
+              features = {
+                kubernetesTalosAPIAccess = {
+                  allowedKubernetesNamespaces = [
+                    "system-upgrade"
+                  ]
+                  allowedRoles = [
+                    "os:admin"
+                  ]
+                  enabled = true
+                }
               }
-            } }
+              nodeAnnotations = {
+                "tuppr.home-operations.com/schematic" = node_config.device_type == "rpi" ? var.talos_rpi_factory_id : var.talos_factory_id
+              }
+            }
           })
         ])
       }
