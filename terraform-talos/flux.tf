@@ -1,10 +1,3 @@
-resource "flux_bootstrap_git" "this" {
-  embedded_manifests = true
-  path               = "clusters/${var.cluster_name}"
-
-  depends_on = [kubernetes_secret_v1.sops-age]
-}
-
 resource "kubernetes_namespace_v1" "flux-system" {
   metadata {
     name = "flux-system"
@@ -29,4 +22,24 @@ resource "kubernetes_secret_v1" "sops-age" {
   }
 
   depends_on = [kubernetes_namespace_v1.flux-system]
+}
+
+resource "helm_release" "flux_operator" {
+  depends_on = [kubernetes_namespace_v1.flux-system]
+
+  name       = "flux-operator"
+  namespace  = "flux-system"
+  repository = "oci://ghcr.io/controlplaneio-fluxcd/charts"
+  chart      = "flux-operator"
+  wait       = true
+}
+
+data "http" "flux_instance_yaml" {
+  url = "https://gitlab.com/tmee/fluxcd/-/raw/main/clusters/${var.cluster_name}/flux-instance.yaml"
+}
+
+resource "kubectl_manifest" "flux_instance" {
+  yaml_body = data.http.flux_instance_yaml.response_body
+
+  depends_on = [helm_release.flux_operator]
 }

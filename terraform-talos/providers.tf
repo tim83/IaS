@@ -20,17 +20,20 @@ terraform {
       source  = "siderolabs/talos"
       version = "0.10.1"
     }
-    flux = {
-      source  = "fluxcd/flux"
-      version = "1.8"
-    }
     kubernetes = {
       source  = "hashicorp/kubernetes"
       version = "3.0.1"
     }
+    kubectl = {
+      source  = "gavinbunney/kubectl"
+      version = "1.14.0"
+    }
+    helm = {
+      source  = "hashicorp/helm"
+      version = "2.17.0"
+    }
   }
 }
-
 
 provider "proxmox" {
   endpoint  = var.proxmox_pve_node_address
@@ -51,25 +54,26 @@ provider "proxmox" {
 provider "talos" {
 }
 
-provider "flux" {
-  kubernetes = {
-    host                   = "https://10.30.2.200:6443" # resource.talos_cluster_kubeconfig.talos.kubernetes_client_configuration.host
-    client_certificate     = base64decode(resource.talos_cluster_kubeconfig.talos.kubernetes_client_configuration.client_certificate)
-    client_key             = base64decode(resource.talos_cluster_kubeconfig.talos.kubernetes_client_configuration.client_key)
-    cluster_ca_certificate = base64decode(resource.talos_cluster_kubeconfig.talos.kubernetes_client_configuration.ca_certificate)
-  }
-  git = {
-    url = var.git_repository
-    http = {
-      username = "fluxcd"
-      password = var.gitlab_token
-    }
-  }
-}
-
 provider "kubernetes" {
   host                   = "https://10.30.2.200:6443" # resource.talos_cluster_kubeconfig.talos.kubernetes_client_configuration.host
   client_certificate     = base64decode(resource.talos_cluster_kubeconfig.talos.kubernetes_client_configuration.client_certificate)
   client_key             = base64decode(resource.talos_cluster_kubeconfig.talos.kubernetes_client_configuration.client_key)
   cluster_ca_certificate = base64decode(resource.talos_cluster_kubeconfig.talos.kubernetes_client_configuration.ca_certificate)
+}
+
+provider "kubectl" {
+  host                   = "https://10.30.2.200:6443" # resource.talos_cluster_kubeconfig.talos.kubernetes_client_configuration.host
+  client_certificate     = base64decode(resource.talos_cluster_kubeconfig.talos.kubernetes_client_configuration.client_certificate)
+  client_key             = base64decode(resource.talos_cluster_kubeconfig.talos.kubernetes_client_configuration.client_key)
+  cluster_ca_certificate = base64decode(resource.talos_cluster_kubeconfig.talos.kubernetes_client_configuration.ca_certificate)
+  load_config_file       = false
+}
+
+provider "helm" {
+  kubernetes {
+    host                   = "https://10.30.2.200:6443" # resource.talos_cluster_kubeconfig.talos.kubernetes_client_configuration.host
+    client_certificate     = base64decode(resource.talos_cluster_kubeconfig.talos.kubernetes_client_configuration.client_certificate)
+    client_key             = base64decode(resource.talos_cluster_kubeconfig.talos.kubernetes_client_configuration.client_key)
+    cluster_ca_certificate = base64decode(resource.talos_cluster_kubeconfig.talos.kubernetes_client_configuration.ca_certificate)
+  }
 }
