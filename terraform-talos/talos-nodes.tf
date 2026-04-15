@@ -45,7 +45,7 @@ locals {
 }
 
 # see https://registry.terraform.io/providers/bpg/proxmox/0.60.0/docs/resources/virtual_environment_file
-resource "proxmox_virtual_environment_download_file" "talos" {
+resource "proxmox_download_file" "talos" {
   for_each = local.pve_nodes
 
   node_name    = each.value
@@ -90,7 +90,7 @@ resource "proxmox_virtual_environment_vm" "talos_node" {
     version = "v2.0"
   }
   cdrom {
-    file_id = proxmox_virtual_environment_download_file.talos[each.value.pve_node_name].id
+    file_id = proxmox_download_file.talos[each.value.pve_node_name].id
   }
   efi_disk {
     datastore_id = "local-lvm"
