@@ -59,7 +59,10 @@ locals {
                   {
                     deviceSelector = { busPath = node_config.device_type == "rpi" ? "fd580000.ethernet" : "0*" },
                     addresses      = ["${node_config.address}/24"]
-                    dhcp           = true
+                    routes = [{
+                      network = "0.0.0.0/0"
+                      gateway = "10.30.2.1"
+                    }]
                   }
                 ]
               },
