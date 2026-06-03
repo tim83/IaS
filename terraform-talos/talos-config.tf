@@ -80,6 +80,12 @@ locals {
               vip            = { ip = var.cluster_vip }
             }
           ] } } }) : "",
+          node_config.node_type != "worker" ? yamlencode({ cluster = { apiServer = { extraArgs = {
+            oidc-issuer-url     = "https://pocketid.mees-olivier.com"
+            oidc-client-id      = "16ec9bf8-64d6-4a84-bbc1-e842bb9c8523"
+            oidc-username-claim = "email"
+            oidc-groups-claim   = "groups"
+          } } } }) : "",
           yamlencode({ apiVersion = "v1alpha1", kind = "HostnameConfig", hostname = node_config.name, auto = "off" }),
           node_config.node_type != "worker" ? yamlencode({ # Needed for system-upgrade controller (tuppr)
             machine = {
