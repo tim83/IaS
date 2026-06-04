@@ -33,7 +33,7 @@ locals {
       node_config,
       {
         name    = "${var.cluster_name}-${node_config.node_type}-${idx}",
-        address = cidrhost(var.cluster_node_network, idx + 1),
+        address = cidrhost(var.cluster_node_network, idx),
         idx     = idx + (can(node_config.start_idx) ? node_config.start_idx : 0),
       }
     )
