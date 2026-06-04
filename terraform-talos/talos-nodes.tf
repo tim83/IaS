@@ -33,7 +33,7 @@ locals {
       node_config,
       {
         name    = "${var.cluster_name}-${node_config.node_type}-${idx}",
-        address = cidrhost(var.cluster_node_network, idx),
+        address = cidrhost(var.cluster_node_network, idx + 1),
         idx     = idx + (can(node_config.start_idx) ? node_config.start_idx : 0),
       }
     )
@@ -84,7 +84,7 @@ resource "proxmox_virtual_environment_vm" "talos_node" {
   }
   network_device {
     bridge   = "vmbr0"
-    firewall = true
+    firewall = false
   }
   tpm_state {
     version = "v2.0"

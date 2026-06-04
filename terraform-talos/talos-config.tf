@@ -53,6 +53,18 @@ locals {
         bootstrap_ip = (can(node_config.bootstrap_ip) && node_config.bootstrap_ip != null) ? node_config.bootstrap_ip : node_config.address
         config_patches = compact([
           yamlencode({
+            cluster = {
+              network = {
+                cni = {
+                  name = "none"
+                }
+              }
+              proxy = {
+                disabled = true
+              }
+            }
+          }),
+          yamlencode({
             machine = {
               network = {
                 interfaces = [
