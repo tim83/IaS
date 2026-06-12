@@ -2,7 +2,7 @@
 
 pkgs.mkShell {
   buildInputs = with pkgs; [
-    terraform
+    opentofu
     talosctl
     fluxcd
     sops
@@ -11,7 +11,5 @@ pkgs.mkShell {
     git
     gitleaks
     pre-commit
-    tflint
-    terraform-docs
   ];
 }
