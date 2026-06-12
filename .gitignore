@@ -1,3 +1,4 @@
 talos/config
 terraform/.terraform.lock.hcl
 terraform/plan
+.direnv/
