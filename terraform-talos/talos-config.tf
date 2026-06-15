@@ -114,6 +114,13 @@ locals {
               }
             }
           }) : "",
+          node_config.node_type == "worker" && node_config.device_type == "rpi" ? yamlencode({
+            machine = {
+              nodeTaints = {
+                hardware = "rpi:NoSchedule"
+              }
+            }
+          }) : "",
         ])
       }
     )
