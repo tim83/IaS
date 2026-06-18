@@ -73,6 +73,7 @@ variable "vm_node_config" {
     start_idx     = optional(number, 0)
     count         = number
     cpu_count     = number
+    min_ram_gb    = optional(number, 2)
     max_ram_gb    = number
     disk_size     = number
   }))
@@ -82,7 +83,8 @@ variable "vm_node_config" {
       node_type     = "worker"
       count         = 2
       cpu_count     = 5
-      max_ram_gb    = 20
+      min_ram_gb    = 9
+      max_ram_gb    = 9
       disk_size     = 250
     },
   ]
