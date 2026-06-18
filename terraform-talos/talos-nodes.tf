@@ -69,6 +69,7 @@ resource "proxmox_virtual_environment_vm" "talos_node" {
   tags            = sort(["talos", "terraform", each.value.node_type])
   stop_on_destroy = true
   bios            = "ovmf"
+  machine         = "q35"
   scsi_hardware   = "virtio-scsi-single"
   boot_order      = ["scsi0", "ide3", "net0"]
   operating_system {
