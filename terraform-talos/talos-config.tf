@@ -81,6 +81,14 @@ locals {
               },
             }
           }),
+          yamlencode({
+            machine = {
+              sysctls = {
+                "fs.inotify.max_user_watches"   = "1048576"
+                "fs.inotify.max_user_instances" = "8192"
+              }
+            }
+          }),
           node_config.device_type == "rpi" ? yamlencode(local.rpi_config_patch) : "",
           node_config.device_type == "vm" ? yamlencode(local.vm_config_patch) : "",
           node_config.node_type == "hybrid" ? yamlencode(local.hybrid_config_patch) : "",
