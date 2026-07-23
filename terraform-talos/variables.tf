@@ -95,8 +95,8 @@ variable "vm_node_config" {
       node_subtype  = "storage",
       node_id       = 5
       count         = 1,
-      cpu_count     = 1,
-      max_ram_gb    = 2,
+      cpu_count     = 2,
+      max_ram_gb    = 3,
       disk_size     = 250
     }
   ]
@@ -114,7 +114,7 @@ variable "metal_node_config" {
     { device_type = "rpi", node_type = "controller", node_id = 0 },
     { device_type = "rpi", node_type = "controller", node_id = 1 },
     { device_type = "rpi", node_type = "controller", node_id = 2 },
-    { device_type = "rpi", node_type = "worker", node_subtype = "storage", node_id = 3 },
+    # { device_type = "rpi", node_type = "worker", node_subtype = "storage", node_id = 3 },
   ]
 }
 
