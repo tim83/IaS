@@ -250,9 +250,8 @@ resource "kubernetes_labels" "storage_nodes" {
     if try(node.node_subtype, "") == "storage"
   }
 
-  api_version   = "v1"
-  kind          = "Node"
-  field_manager = "terraform-node-labels"
+  api_version = "v1"
+  kind        = "Node"
   metadata {
     name = each.value.name
   }
@@ -272,7 +271,6 @@ resource "kubernetes_node_taint" "storage_nodes" {
     if try(node.node_subtype, "") == "storage"
   }
 
-  field_manager = "terraform-node-taints"
   metadata {
     name = each.value.name
   }
