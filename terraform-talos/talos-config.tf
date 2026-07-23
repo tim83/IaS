@@ -283,6 +283,10 @@ resource "kubernetes_node_taint" "storage_nodes" {
     effect = "NoSchedule"
   }
 
+  lifecycle {
+    ignore_changes = [taint]
+  }
+
   depends_on = [
     talos_cluster_kubeconfig.talos,
     time_sleep.wait_for_cluster_ip

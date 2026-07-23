@@ -114,7 +114,7 @@ variable "metal_node_config" {
     { device_type = "rpi", node_type = "controller", node_id = 0 },
     { device_type = "rpi", node_type = "controller", node_id = 1 },
     { device_type = "rpi", node_type = "controller", node_id = 2 },
-    # { device_type = "rpi", node_type = "worker", node_subtype = "storage", node_id = 3 } }
+    { device_type = "rpi", node_type = "worker", node_subtype = "storage", node_id = 3 },
   ]
 }
 
