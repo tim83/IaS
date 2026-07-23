@@ -122,16 +122,18 @@ locals {
               }
             }
           }) : "",
-          node_config.node_type == "worker" && node_config.device_type == "rpi" ? yamlencode({
+          try(node_config.node_subtype, "") == "storage" ? yamlencode({
             machine = {
-              nodeTaints = {
-                hardware = "rpi:NoSchedule"
+              nodeLabels = {
+                "node-role.kubernetes.io/storage" = ""
               }
             }
           }) : "",
-          can(node_config.node_labels) && node_config.node_labels != null && length(keys(node_config.node_labels)) > 0 ? yamlencode({
+          try(node_config.node_subtype, "") == "storage" ? yamlencode({
             machine = {
-              nodeLabels = node_config.node_labels
+              nodeTaints = {
+                "node-role.kubernetes.io/storage" = "true:NoSchedule"
+              }
             }
           }) : "",
         ])
