@@ -40,12 +40,14 @@ resource "helm_release" "flux_operator" {
   }
 }
 
-data "http" "flux_instance_yaml" {
-  url = "https://gitlab.com/tmee/fluxcd/-/raw/main/clusters/${var.cluster_name}/flux-instance.yaml"
-}
+resource "null_resource" "flux_instance_bootstrap" {
+  triggers = {
+    flux_operator = helm_release.flux_operator.id
+  }
 
-resource "kubernetes_manifest" "flux_instance" {
-  manifest = yamldecode(data.http.flux_instance_yaml.response_body)
+  provisioner "local-exec" {
+    command = "kubectl apply -f https://gitlab.com/tmee/fluxcd/-/raw/main/clusters/${var.cluster_name}/flux-instance.yaml"
+  }
 
   depends_on = [helm_release.flux_operator]
 }

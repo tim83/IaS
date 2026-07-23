@@ -122,20 +122,7 @@ locals {
               }
             }
           }) : "",
-          try(node_config.node_subtype, "") == "storage" ? yamlencode({
-            machine = {
-              nodeLabels = {
-                "node-role.kubernetes.io/storage" = ""
-              }
-            }
-          }) : "",
-          try(node_config.node_subtype, "") == "storage" ? yamlencode({
-            machine = {
-              nodeTaints = {
-                "node-role.kubernetes.io/storage" = "true:NoSchedule"
-              }
-            }
-          }) : "",
+
         ])
       }
     )
@@ -255,4 +242,49 @@ resource "time_sleep" "wait_for_cluster_ip" {
   create_duration = "90s"
 
   depends_on = [talos_machine_bootstrap.talos]
+}
+
+resource "kubernetes_labels" "storage_nodes" {
+  for_each = {
+    for key, node in local.worker_nodes : key => node
+    if try(node.node_subtype, "") == "storage"
+  }
+
+  api_version   = "v1"
+  kind          = "Node"
+  field_manager = "terraform-node-labels"
+  metadata {
+    name = each.value.name
+  }
+  labels = {
+    "node-role.kubernetes.io/storage" = ""
+  }
+
+  depends_on = [
+    talos_cluster_kubeconfig.talos,
+    time_sleep.wait_for_cluster_ip
+  ]
+}
+
+resource "kubernetes_node_taint" "storage_nodes" {
+  for_each = {
+    for key, node in local.worker_nodes : key => node
+    if try(node.node_subtype, "") == "storage"
+  }
+
+  field_manager = "terraform-node-taints"
+  metadata {
+    name = each.value.name
+  }
+
+  taint {
+    key    = "node-role.kubernetes.io/storage"
+    value  = "true"
+    effect = "NoSchedule"
+  }
+
+  depends_on = [
+    talos_cluster_kubeconfig.talos,
+    time_sleep.wait_for_cluster_ip
+  ]
 }
