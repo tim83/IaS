@@ -82,12 +82,21 @@ variable "vm_node_config" {
     {
       pve_node_name = "thinkcentre"
       node_type     = "worker"
-      count         = 2
-      cpu_count     = 5
-      min_ram_gb    = 9
-      max_ram_gb    = 9
+      count         = 1
+      cpu_count     = 10
+      min_ram_gb    = 20
+      max_ram_gb    = 20
       disk_size     = 250
     },
+    {
+      pve_node_name = "thinkcentre",
+      node_type     = "worker",
+      count         = 1,
+      cpu_count     = 1,
+      max_ram_gb    = 2,
+      disk_size     = 250,
+      node_labels   = { "node-role.kubernetes.io/storage" = "" }
+    }
   ]
 }
 
