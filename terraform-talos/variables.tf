@@ -76,6 +76,7 @@ variable "vm_node_config" {
     min_ram_gb    = optional(number, 2)
     max_ram_gb    = number
     disk_size     = number
+    node_labels   = optional(map(string), {})
   }))
   default = [
     {
@@ -95,12 +96,13 @@ variable "metal_node_config" {
     device_type  = string
     node_type    = string
     bootstrap_ip = optional(string)
+    node_labels  = optional(map(string), {})
   }))
   default = [
     { device_type = "rpi", node_type = "controller" },
     { device_type = "rpi", node_type = "controller" },
     { device_type = "rpi", node_type = "controller" },
-    { device_type = "rpi", node_type = "worker" },
+    { device_type = "rpi", node_type = "worker", node_labels = { "node-role.kubernetes.io/storage" = "" } },
   ]
 }
 

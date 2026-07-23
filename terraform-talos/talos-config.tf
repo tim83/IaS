@@ -129,6 +129,11 @@ locals {
               }
             }
           }) : "",
+          can(node_config.node_labels) && node_config.node_labels != null && length(keys(node_config.node_labels)) > 0 ? yamlencode({
+            machine = {
+              nodeLabels = node_config.node_labels
+            }
+          }) : "",
         ])
       }
     )
