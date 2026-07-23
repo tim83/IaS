@@ -32,7 +32,12 @@ resource "helm_release" "flux_operator" {
   namespace  = "flux-system"
   repository = "oci://ghcr.io/controlplaneio-fluxcd/charts"
   chart      = "flux-operator"
+  version    = "0.42.1"
   wait       = true
+
+  lifecycle {
+    ignore_changes = all
+  }
 }
 
 data "http" "flux_instance_yaml" {
