@@ -39,7 +39,7 @@
     },
     {
       "matchDepNames": ["opentofu/opentofu"],
-      "minimumReleaseAge": "60 days"
+      "minimumReleaseAge": "120 days"
     }
   ]
 }
