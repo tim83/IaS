@@ -70,7 +70,7 @@ variable "vm_node_config" {
   type = list(object({
     pve_node_name = string
     node_type     = string
-    start_idx     = optional(number, 0)
+    node_id       = optional(number)
     count         = number
     cpu_count     = number
     min_ram_gb    = optional(number, 2)
@@ -82,6 +82,7 @@ variable "vm_node_config" {
     {
       pve_node_name = "thinkcentre"
       node_type     = "worker"
+      node_id       = 4
       count         = 1
       cpu_count     = 10
       min_ram_gb    = 20
@@ -91,6 +92,7 @@ variable "vm_node_config" {
     {
       pve_node_name = "thinkcentre",
       node_type     = "worker",
+      node_id       = 5
       count         = 1,
       cpu_count     = 1,
       max_ram_gb    = 2,
@@ -104,14 +106,15 @@ variable "metal_node_config" {
   type = list(object({
     device_type  = string
     node_type    = string
+    node_id      = optional(number)
     bootstrap_ip = optional(string)
     node_labels  = optional(map(string), {})
   }))
   default = [
-    { device_type = "rpi", node_type = "controller" },
-    { device_type = "rpi", node_type = "controller" },
-    { device_type = "rpi", node_type = "controller" },
-    { device_type = "rpi", node_type = "worker", node_labels = { "node-role.kubernetes.io/storage" = "" } },
+    { device_type = "rpi", node_type = "controller", node_id = 0 },
+    { device_type = "rpi", node_type = "controller", node_id = 1 },
+    { device_type = "rpi", node_type = "controller", node_id = 2 },
+    { device_type = "rpi", node_type = "worker", node_id = 3, node_labels = { "node-role.kubernetes.io/storage" = "" } },
   ]
 }
 

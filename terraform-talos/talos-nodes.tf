@@ -1,40 +1,50 @@
 locals {
   pve_nodes = toset([for config in var.vm_node_config : config.pve_node_name])
-  _vm_nodes = flatten([
-    for config_idx, node_config in var.vm_node_config : [
-      for node_idx in range(node_config.count) : [
-        merge(
-          node_config,
-          {
-            device_type = "vm"
-            key         = "${node_config.pve_node_name}-${node_config.node_type}-${config_idx * 10 + node_idx + node_config.start_idx}"
-            vm_id       = 800 + config_idx * 10 + node_idx + node_config.start_idx
-          }
-        )
-      ]
-    ]
-  ])
+
   _metal_nodes = flatten([
     for node_type_idx, node_type in ["controller", "worker", "hybrid"] : [
-      for node_idx, node_config in [for node_config in var.metal_node_config : node_config if node_config.node_type == node_type] : [
+      for node_idx, node_config in [for nc in var.metal_node_config : nc if nc.node_type == node_type] : [
         merge(
           node_config,
           {
-            key = "${node_config.device_type}-${node_config.node_type}-${100 + node_idx + 10 * node_type_idx}"
+            key     = "${node_config.device_type}-${node_config.node_type}-${100 + node_idx + 10 * node_type_idx}"
+            node_id = try(node_config.node_id, null) != null ? node_config.node_id : (node_idx + 10 * node_type_idx)
           }
         )
       ]
     ]
   ])
+
+  _vm_nodes_flat = flatten([
+    for config_idx, node_config in var.vm_node_config : [
+      for node_idx in range(node_config.count) : {
+        config_idx  = config_idx
+        node_idx    = node_idx
+        node_config = node_config
+      }
+    ]
+  ])
+
+  _vm_nodes = [
+    for vm_idx, item in local._vm_nodes_flat : merge(
+      item.node_config,
+      {
+        device_type = "vm"
+        key         = "${item.node_config.pve_node_name}-${item.node_config.node_type}-${vm_idx}"
+        vm_id       = 800 + vm_idx
+        node_id     = try(item.node_config.node_id, null) != null ? (item.node_config.node_id + item.node_idx) : (length(local._metal_nodes) + vm_idx)
+      }
+    )
+  ]
 }
 locals {
   all_nodes = [
-    for idx, node_config in concat(local._metal_nodes, local._vm_nodes) : merge(
+    for node_config in concat(local._metal_nodes, local._vm_nodes) : merge(
       node_config,
       {
-        name    = "${var.cluster_name}-${node_config.node_type}-${idx}",
-        address = cidrhost(var.cluster_node_network, idx),
-        idx     = idx + (can(node_config.start_idx) ? node_config.start_idx : 0),
+        name    = "${var.cluster_name}-${node_config.node_type}-${node_config.node_id}"
+        address = cidrhost(var.cluster_node_network, node_config.node_id)
+        idx     = node_config.node_id
       }
     )
   ]
