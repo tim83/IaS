@@ -12,18 +12,6 @@ pveum aclmod / -user terraform@$HOSTNAME -role Terraform
 pveum user token add terraform@$HOSTNAME provider --privsep=0
 ```
 
-## Install TrueNAS
-
-- Install TrueNAS as a normal VM
-- Passtrough the HDDs
-  - Get the /dev/disk/by-id paths of the disks with `lsblk |awk 'NR==1{print $0" DEVICE-ID(S)"}NR>1{dev=$1;printf $0" ";system("find /dev/disk/by-id -lname \"*"dev"\" -printf \" %p\"");print "";}'|grep -v -E 'part|lvm'`
-
-```bash
-qm set 100 -scsi1 /dev/disk/by-id/ata-ST8000DM004-2U9188_ZR15MFTV
-qm set 100 -scsi2 /dev/disk/by-id/ata-ST8000DM004-2U9188_ZR15NM8T
-qm set 100 -scsi3 /dev/disk/by-id/ata-ST8000DM004-2U9188_ZR15LR09
-```
-
 ## Run terraform
 
 ```bash
