@@ -98,7 +98,17 @@ variable "vm_node_config" {
       cpu_count     = 2,
       max_ram_gb    = 3,
       disk_size     = 250
-    }
+    },
+    {
+      pve_node_name = "thinknugget"
+      node_type     = "worker"
+      node_id       = 4
+      count         = 1
+      cpu_count     = 6
+      min_ram_gb    = 10
+      max_ram_gb    = 10
+      disk_size     = 150
+    },
   ]
 }
 
