@@ -104,7 +104,7 @@ variable "vm_node_config" {
     {
       pve_node_name = "thinknugget"
       node_type     = "worker"
-      node_id       = 4
+      node_id       = 6
       count         = 1
       cpu_count     = 6
       min_ram_gb    = 10
