@@ -112,7 +112,7 @@ resource "proxmox_virtual_environment_vm" "talos_node" {
     datastore_id = "local-lvm"
     interface    = "scsi0"
     iothread     = true
-    size         = 35
+    size         = each.value.boot_disk_size
     file_format  = "raw"
   }
   disk {

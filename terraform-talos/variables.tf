@@ -77,6 +77,7 @@ variable "vm_node_config" {
     min_ram_gb    = optional(number, 2)
     max_ram_gb    = number
     disk_size     = number
+    boot_disk_size = optional(number, 35)
   }))
   default = [
     {
@@ -88,6 +89,7 @@ variable "vm_node_config" {
       min_ram_gb    = 20
       max_ram_gb    = 20
       disk_size     = 250
+      boot_disk_size = 50
     },
     {
       pve_node_name = "thinkcentre",
