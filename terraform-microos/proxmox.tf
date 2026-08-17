@@ -92,12 +92,12 @@ resource "proxmox_virtual_environment_vm" "controller" {
     version = "v2.0"
   }
   efi_disk {
-    datastore_id = "local-lvm"
+    datastore_id = "local-zfs"
     file_format  = "raw"
     type         = "4m"
   }
   disk {
-    datastore_id = "local-lvm"
+    datastore_id = "local-zfs"
     interface    = "scsi0"
     iothread     = true
     discard      = "on"
@@ -154,12 +154,12 @@ resource "proxmox_virtual_environment_vm" "worker" {
     version = "v2.0"
   }
   efi_disk {
-    datastore_id = "local-lvm"
+    datastore_id = "local-zfs"
     file_format  = "raw"
     type         = "4m"
   }
   disk {
-    datastore_id = "local-lvm"
+    datastore_id = "local-zfs"
     interface    = "scsi0"
     iothread     = true
     discard      = "on"

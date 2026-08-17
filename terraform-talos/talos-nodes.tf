@@ -98,25 +98,26 @@ resource "proxmox_virtual_environment_vm" "talos_node" {
     firewall = false
   }
   tpm_state {
+    datastore_id = "local-zfs"
     version = "v2.0"
   }
   cdrom {
     file_id = proxmox_download_file.talos[each.value.pve_node_name].id
   }
   efi_disk {
-    datastore_id = "local-lvm"
+    datastore_id = "local-zfs"
     file_format  = "raw"
     type         = "4m"
   }
   disk {
-    datastore_id = "local-lvm"
+    datastore_id = "local-zfs"
     interface    = "scsi0"
     iothread     = true
     size         = each.value.boot_disk_size
     file_format  = "raw"
   }
   disk {
-    datastore_id = "local-lvm"
+    datastore_id = "local-zfs"
     interface    = "scsi1"
     iothread     = true
     size         = each.value.disk_size
@@ -126,6 +127,7 @@ resource "proxmox_virtual_environment_vm" "talos_node" {
     trim    = true
   }
   initialization {
+    datastore_id = "local-zfs"
     ip_config {
       ipv4 {
         address = "${each.value.address}/24"

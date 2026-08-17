@@ -41,8 +41,8 @@ provider "proxmox" {
     agent    = true
 
     node {
-      name    = "thinkcentre"
-      address = "10.30.2.10"
+      name    = "thinknugget"
+      address = "10.30.2.12"
     }
   }
 }
