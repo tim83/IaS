@@ -81,6 +81,16 @@ variable "vm_node_config" {
   }))
   default = [
     {
+      pve_node_name = "thinknugget"
+      node_type     = "worker"
+      node_id       = 6
+      count         = 1
+      cpu_count     = 6
+      min_ram_gb    = 10
+      max_ram_gb    = 10
+      disk_size     = 150
+    },
+    {
       pve_node_name = "thinkcentre"
       node_type     = "worker"
       node_id       = 4
@@ -90,26 +100,6 @@ variable "vm_node_config" {
       max_ram_gb    = 20
       disk_size     = 250
       boot_disk_size = 50
-    },
-    {
-      pve_node_name = "thinkcentre",
-      node_type     = "worker",
-      node_subtype  = "storage",
-      node_id       = 5
-      count         = 1,
-      cpu_count     = 2,
-      max_ram_gb    = 3,
-      disk_size     = 250
-    },
-    {
-      pve_node_name = "thinknugget"
-      node_type     = "worker"
-      node_id       = 6
-      count         = 1
-      cpu_count     = 6
-      min_ram_gb    = 10
-      max_ram_gb    = 10
-      disk_size     = 150
     },
   ]
 }
