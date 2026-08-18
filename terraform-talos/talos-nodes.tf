@@ -76,7 +76,7 @@ resource "proxmox_virtual_environment_vm" "talos_node" {
   node_name = each.value.pve_node_name
   vm_id     = each.value.vm_id
 
-  protection      =  true
+  protection      = true
   tags            = sort(["talos", "terraform", each.value.node_type])
   stop_on_destroy = true
   bios            = "ovmf"
@@ -100,7 +100,7 @@ resource "proxmox_virtual_environment_vm" "talos_node" {
   }
   tpm_state {
     datastore_id = "local-zfs"
-    version = "v2.0"
+    version      = "v2.0"
   }
   cdrom {
     file_id = proxmox_download_file.talos[each.value.pve_node_name].id

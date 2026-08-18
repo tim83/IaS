@@ -68,15 +68,15 @@ variable "cluster_node_network" {
 
 variable "vm_node_config" {
   type = list(object({
-    pve_node_name = string
-    node_type     = string
-    node_subtype  = optional(string)
-    node_id       = optional(number)
-    count         = number
-    cpu_count     = number
-    min_ram_gb    = optional(number, 2)
-    max_ram_gb    = number
-    disk_size     = number
+    pve_node_name  = string
+    node_type      = string
+    node_subtype   = optional(string)
+    node_id        = optional(number)
+    count          = number
+    cpu_count      = number
+    min_ram_gb     = optional(number, 2)
+    max_ram_gb     = number
+    disk_size      = number
     boot_disk_size = optional(number, 35)
   }))
   default = [
@@ -91,14 +91,14 @@ variable "vm_node_config" {
       disk_size     = 150
     },
     {
-      pve_node_name = "thinkcentre"
-      node_type     = "worker"
-      node_id       = 4
-      count         = 1
-      cpu_count     = 10
-      min_ram_gb    = 20
-      max_ram_gb    = 20
-      disk_size     = 250
+      pve_node_name  = "thinkcentre"
+      node_type      = "worker"
+      node_id        = 4
+      count          = 1
+      cpu_count      = 10
+      min_ram_gb     = 20
+      max_ram_gb     = 20
+      disk_size      = 250
       boot_disk_size = 50
     },
   ]
