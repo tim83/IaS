@@ -29,6 +29,10 @@ locals {
             options     = ["bind", "rshared", "rw"]
           }
         ]
+        extraArgs = {
+          shutdown-grace-period = "60s"
+          shutdown-grace-period-critical-pods = "15s"
+        }
       }
     }
   }
