@@ -30,8 +30,8 @@ locals {
       item.node_config,
       {
         device_type = "vm"
-        key         = "${item.node_config.pve_node_name}-${item.node_config.node_type}-${vm_idx}"
-        vm_id       = 800 + vm_idx
+        key         = "${item.node_config.pve_node_name}-${item.node_config.node_type}-${item.node_config.node_id}"
+        vm_id       = 800 + item.node_config.node_id
         node_id     = try(item.node_config.node_id, null) != null ? (item.node_config.node_id + item.node_idx) : (length(local._metal_nodes) + vm_idx)
       }
     )

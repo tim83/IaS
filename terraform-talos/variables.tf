@@ -83,7 +83,7 @@ variable "vm_node_config" {
     {
       pve_node_name = "thinknugget"
       node_type     = "worker"
-      node_id       = 6
+      node_id       = 3
       count         = 1
       cpu_count     = 6
       min_ram_gb    = 10
@@ -116,7 +116,6 @@ variable "metal_node_config" {
     { device_type = "rpi", node_type = "controller", node_id = 0 },
     { device_type = "rpi", node_type = "controller", node_id = 1 },
     { device_type = "rpi", node_type = "controller", node_id = 2 },
-    # { device_type = "rpi", node_type = "worker", node_subtype = "storage", node_id = 3 },
   ]
 }
 
