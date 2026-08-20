@@ -18,31 +18,6 @@ locals {
     }
   } }
   hybrid_config_patch = { machine = { cluster = { allowSchedulingOnControlPlanes = true } } }
-  worker_config_patch = {
-    machine = {
-      kubelet = {
-        extraMounts = [
-          {
-            destination = "/var/mnt/longhorn",
-            type        = "bind",
-            source      = "/var/mnt/longhorn"
-            options     = ["bind", "rshared", "rw"]
-          }
-        ]
-      }
-    }
-  }
-  longhorn_volume_config_patch = {
-    apiVersion = "v1alpha1"
-    kind       = "UserVolumeConfig"
-    name       = "longhorn"
-    provisioning = {
-      diskSelector = { match = "!system_disk" }
-      maxSize      = "200GiB"
-      minSize      = "100GiB"
-    }
-    filesystem = { type = "xfs" }
-  }
 }
 locals {
   all_nodes_complete = {
@@ -92,8 +67,6 @@ locals {
           node_config.device_type == "rpi" ? yamlencode(local.rpi_config_patch) : "",
           node_config.device_type == "vm" ? yamlencode(local.vm_config_patch) : "",
           node_config.node_type == "hybrid" ? yamlencode(local.hybrid_config_patch) : "",
-          node_config.node_type != "controller" ? yamlencode(local.worker_config_patch) : "",
-          node_config.node_type != "controller" ? yamlencode(local.longhorn_volume_config_patch) : "",
           node_config.node_type != "worker" ? yamlencode({ machine = { network = { interfaces = [
             {
               deviceSelector = { busPath = node_config.device_type == "rpi" ? "fd580000.ethernet" : "0*" },

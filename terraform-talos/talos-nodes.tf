@@ -117,12 +117,6 @@ resource "proxmox_virtual_environment_vm" "talos_node" {
     size         = each.value.boot_disk_size
     file_format  = "raw"
   }
-  disk {
-    datastore_id = "local-zfs"
-    interface    = "scsi1"
-    iothread     = true
-    size         = each.value.disk_size
-  }
   agent {
     enabled = true
     trim    = true
