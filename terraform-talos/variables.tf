@@ -85,8 +85,8 @@ variable "vm_node_config" {
       node_id       = 3
       count         = 1
       cpu_count     = 6
-      min_ram_gb    = 10
-      max_ram_gb    = 10
+      min_ram_gb    = 8
+      max_ram_gb    = 8
     },
     {
       pve_node_name  = "thinkcentre"
