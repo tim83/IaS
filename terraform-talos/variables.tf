@@ -76,7 +76,7 @@ variable "vm_node_config" {
     cpu_count      = number
     min_ram_gb     = optional(number, 2)
     max_ram_gb     = number
-    boot_disk_size = optional(number, 35)
+    boot_disk_size = optional(number, 60)
   }))
   default = [
     {
@@ -96,7 +96,6 @@ variable "vm_node_config" {
       cpu_count      = 10
       min_ram_gb     = 20
       max_ram_gb     = 20
-      boot_disk_size = 50
     },
   ]
 }
