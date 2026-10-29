@@ -89,13 +89,13 @@ variable "vm_node_config" {
       max_ram_gb    = 8
     },
     {
-      pve_node_name  = "thinkcentre"
-      node_type      = "worker"
-      node_id        = 4
-      count          = 1
-      cpu_count      = 10
-      min_ram_gb     = 20
-      max_ram_gb     = 20
+      pve_node_name = "thinkcentre"
+      node_type     = "worker"
+      node_id       = 4
+      count         = 1
+      cpu_count     = 10
+      min_ram_gb    = 20
+      max_ram_gb    = 20
     },
   ]
 }
