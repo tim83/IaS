@@ -63,11 +63,12 @@ locals {
             kind       = "KubeFlannelCNIConfig"
             "$patch"   = "delete"
           }),
-          yamlencode({
+          // KubeProxyConfig is only allowed on control plane machines
+          node_config.node_type != "worker" ? yamlencode({
             apiVersion = "v1alpha1"
             kind       = "KubeProxyConfig"
             enabled    = false
-          }),
+          }) : "",
           yamlencode({
             machine = {
               network = {
@@ -115,12 +116,23 @@ locals {
           ] } } }) : "",
           node_config.node_type != "worker" ? yamlencode({
             apiVersion = "v1alpha1"
-            kind       = "KubeAPIServerConfig"
-            extraArgs = {
-              oidc-issuer-url     = "https://pocketid.mees-olivier.com"
-              oidc-client-id      = "16ec9bf8-64d6-4a84-bbc1-e842bb9c8523"
-              oidc-username-claim = "email"
-              oidc-groups-claim   = "groups"
+            kind       = "KubeAuthenticationConfig"
+            configuration = {
+              apiVersion = "apiserver.config.k8s.io/v1"
+              kind       = "AuthenticationConfiguration"
+              jwt = [
+                {
+                  issuer = {
+                    url                 = "https://pocketid.mees-olivier.com"
+                    audiences           = ["16ec9bf8-64d6-4a84-bbc1-e842bb9c8523"]
+                    audienceMatchPolicy = "MatchAny"
+                  }
+                  claimMappings = {
+                    username = { claim = "email", prefix = "" }
+                    groups   = { claim = "groups", prefix = "" }
+                  }
+                }
+              ]
             }
           }) : "",
           yamlencode({ apiVersion = "v1alpha1", kind = "HostnameConfig", hostname = node_config.name, auto = "off" }),
