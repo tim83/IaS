@@ -1,23 +1,53 @@
 locals {
-  vm_config_patch = { machine = {
-    install = {
-      disk  = "/dev/sda"
-      image = "factory.talos.dev/nocloud-installer-secureboot/${var.talos_factory_id}:v${var.talos_version}"
-    }
-    nodeAnnotations = {
-      "tuppr.home-operations.com/schematic" = var.talos_factory_id
-    }
-  } }
-  rpi_config_patch = { machine = {
-    install = {
-      disk  = "/dev/mmcblk0"
-      image = "factory.talos.dev/metal-installer/${var.talos_rpi_factory_id}:v${var.talos_version}"
-    }
-    nodeAnnotations = {
-      "tuppr.home-operations.com/schematic" = var.talos_rpi_factory_id
-    }
-  } }
+  // see https://www.talos.dev/v1.14/reference/configuration/document-map/ for the v1alpha1 -> config document migration
+  vm_config_patch = [
+    {
+      apiVersion = "v1alpha1"
+      kind       = "UnattendedInstallConfig"
+      installer = {
+        image = "factory.talos.dev/nocloud-installer-secureboot/${var.talos_factory_id}:v${var.talos_version}"
+      }
+      provisioning = {
+        diskSelector = {
+          match = "disk.dev_path == \"/dev/sda\""
+        }
+      }
+    },
+    {
+      apiVersion = "v1alpha1"
+      kind       = "KubeNodeConfig"
+      annotations = {
+        "tuppr.home-operations.com/schematic" = var.talos_factory_id
+      }
+    },
+  ]
+  rpi_config_patch = [
+    {
+      apiVersion = "v1alpha1"
+      kind       = "UnattendedInstallConfig"
+      installer = {
+        image = "factory.talos.dev/metal-installer/${var.talos_rpi_factory_id}:v${var.talos_version}"
+      }
+      provisioning = {
+        diskSelector = {
+          match = "disk.dev_path == \"/dev/mmcblk0\""
+        }
+      }
+    },
+    {
+      apiVersion = "v1alpha1"
+      kind       = "KubeNodeConfig"
+      annotations = {
+        "tuppr.home-operations.com/schematic" = var.talos_rpi_factory_id
+      }
+    },
+  ]
   hybrid_config_patch = { machine = { cluster = { allowSchedulingOnControlPlanes = true } } }
+
+  device_type_config_patches = {
+    rpi = local.rpi_config_patch
+    vm  = local.vm_config_patch
+  }
 }
 locals {
   all_nodes_complete = {
@@ -26,18 +56,17 @@ locals {
       node_config,
       {
         bootstrap_ip = (can(node_config.bootstrap_ip) && node_config.bootstrap_ip != null) ? node_config.bootstrap_ip : node_config.address
-        config_patches = compact([
+        config_patches = compact(concat([
+          // disable the default flannel CNI and kube-proxy in favor of Cilium (installed via Flux)
           yamlencode({
-            cluster = {
-              network = {
-                cni = {
-                  name = "none"
-                }
-              }
-              proxy = {
-                disabled = true
-              }
-            }
+            apiVersion = "v1alpha1"
+            kind       = "KubeFlannelCNIConfig"
+            "$patch"   = "delete"
+          }),
+          yamlencode({
+            apiVersion = "v1alpha1"
+            kind       = "KubeProxyConfig"
+            enabled    = false
           }),
           yamlencode({
             machine = {
@@ -52,9 +81,15 @@ locals {
                     }]
                   }
                 ]
-                nameservers = ["10.30.2.1", "1.1.1.1", "8.8.8.8"]
               },
             }
+          }),
+          yamlencode({
+            apiVersion = "v1alpha1"
+            kind       = "ResolverConfig"
+            nameservers = [
+              for ns in ["10.30.2.1", "1.1.1.1", "8.8.8.8"] : { address = ns }
+            ]
           }),
           yamlencode({
             machine = {
@@ -71,8 +106,6 @@ locals {
               }
             }
           }) : "",
-          node_config.device_type == "rpi" ? yamlencode(local.rpi_config_patch) : "",
-          node_config.device_type == "vm" ? yamlencode(local.vm_config_patch) : "",
           node_config.node_type == "hybrid" ? yamlencode(local.hybrid_config_patch) : "",
           node_config.node_type != "worker" ? yamlencode({ machine = { network = { interfaces = [
             {
@@ -80,12 +113,16 @@ locals {
               vip            = { ip = var.cluster_vip }
             }
           ] } } }) : "",
-          node_config.node_type != "worker" ? yamlencode({ cluster = { apiServer = { extraArgs = {
-            oidc-issuer-url     = "https://pocketid.mees-olivier.com"
-            oidc-client-id      = "16ec9bf8-64d6-4a84-bbc1-e842bb9c8523"
-            oidc-username-claim = "email"
-            oidc-groups-claim   = "groups"
-          } } } }) : "",
+          node_config.node_type != "worker" ? yamlencode({
+            apiVersion = "v1alpha1"
+            kind       = "KubeAPIServerConfig"
+            extraArgs = {
+              oidc-issuer-url     = "https://pocketid.mees-olivier.com"
+              oidc-client-id      = "16ec9bf8-64d6-4a84-bbc1-e842bb9c8523"
+              oidc-username-claim = "email"
+              oidc-groups-claim   = "groups"
+            }
+          }) : "",
           yamlencode({ apiVersion = "v1alpha1", kind = "HostnameConfig", hostname = node_config.name, auto = "off" }),
           node_config.node_type != "worker" ? yamlencode({ # Needed for system-upgrade controller (tuppr)
             machine = {
@@ -103,7 +140,9 @@ locals {
             }
           }) : "",
 
-        ])
+          ], [
+          for patch in try(local.device_type_config_patches[node_config.device_type], []) : yamlencode(patch)
+        ]))
       }
     )
   }
