@@ -44,7 +44,7 @@ locals {
   ]
   hybrid_config_patch = { machine = { cluster = { allowSchedulingOnControlPlanes = true } } }
 
-  amd64_config_patch = [
+  pc_config_patch = [
     {
       apiVersion = "v1alpha1"
       kind       = "UnattendedInstallConfig"
@@ -67,9 +67,9 @@ locals {
   ]
 
   device_type_config_patches = {
-    rpi   = local.rpi_config_patch
-    vm    = local.vm_config_patch
-    amd64 = local.amd64_config_patch
+    rpi = local.rpi_config_patch
+    vm  = local.vm_config_patch
+    pc  = local.pc_config_patch
   }
 }
 locals {

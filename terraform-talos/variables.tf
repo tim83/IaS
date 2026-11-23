@@ -76,7 +76,7 @@ variable "vm_node_config" {
     cpu_count      = number
     min_ram_gb     = optional(number, 2)
     max_ram_gb     = number
-    boot_disk_size = optional(number, 60)
+    boot_disk_size = optional(number, 100)
   }))
   default = [
     {
@@ -85,8 +85,8 @@ variable "vm_node_config" {
       node_id       = 4
       count         = 1
       cpu_count     = 10
-      min_ram_gb    = 20
-      max_ram_gb    = 20
+      min_ram_gb    = 30
+      max_ram_gb    = 30
     },
   ]
 }
@@ -102,7 +102,8 @@ variable "metal_node_config" {
   default = [
     { device_type = "rpi", node_type = "controller", node_id = 0 },
     { device_type = "rpi", node_type = "controller", node_id = 1 },
-    { device_type = "amd64", node_type = "hybrid", node_id = 3 },
+    { device_type = "rpi", node_type = "controller", node_id = 2 },
+    { device_type = "pc", node_type = "worker", node_id = 3 },
   ]
 }
 
