@@ -265,9 +265,9 @@ resource "talos_machine_configuration_apply" "controller" {
   node                        = each.value.bootstrap_ip
 
   config_patches = each.value.config_patches
-  depends_on = each.value.device_type == "vm" ? [
-    proxmox_virtual_environment_vm.talos_node[each.key],
-  ] : []
+  depends_on = [
+    proxmox_virtual_environment_vm.talos_node,
+  ]
 }
 
 resource "talos_machine_configuration_apply" "hybrid" {
@@ -279,9 +279,9 @@ resource "talos_machine_configuration_apply" "hybrid" {
   node                        = each.value.bootstrap_ip
 
   config_patches = each.value.config_patches
-  depends_on = each.value.device_type == "vm" ? [
-    proxmox_virtual_environment_vm.talos_node[each.key],
-  ] : []
+  depends_on = [
+    proxmox_virtual_environment_vm.talos_node,
+  ]
 }
 
 resource "talos_machine_configuration_apply" "worker" {
@@ -291,9 +291,9 @@ resource "talos_machine_configuration_apply" "worker" {
   machine_configuration_input = data.talos_machine_configuration.worker.machine_configuration
   endpoint                    = each.value.bootstrap_ip
   node                        = each.value.bootstrap_ip
-  depends_on = each.value.device_type == "vm" ? [
-    proxmox_virtual_environment_vm.talos_node[each.key],
-  ] : []
+  depends_on = [
+    proxmox_virtual_environment_vm.talos_node,
+  ]
   config_patches = each.value.config_patches
 }
 
