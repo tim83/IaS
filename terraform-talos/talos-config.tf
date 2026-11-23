@@ -1,3 +1,18 @@
+// Bare-metal x86 schematic: same extensions as the rpi schematic (no qemu-guest-agent,
+// which never comes online on real hardware and stalls boot).
+resource "talos_image_factory_schematic" "pc" {
+  schematic = yamlencode({
+    customization = {
+      systemExtensions = {
+        officialExtensions = [
+          "siderolabs/iscsi-tools",
+          "siderolabs/util-linux-tools",
+        ]
+      }
+    }
+  })
+}
+
 locals {
   // see https://www.talos.dev/v1.14/reference/configuration/document-map/ for the v1alpha1 -> config document migration
   vm_config_patch = [
@@ -49,7 +64,7 @@ locals {
       apiVersion = "v1alpha1"
       kind       = "UnattendedInstallConfig"
       installer = {
-        image = "factory.talos.dev/metal-installer-secureboot/${var.talos_factory_id}:v${var.talos_version}"
+        image = "factory.talos.dev/metal-installer-secureboot/${talos_image_factory_schematic.pc.id}:v${var.talos_version}"
       }
       provisioning = {
         diskSelector = {
@@ -61,7 +76,7 @@ locals {
       apiVersion = "v1alpha1"
       kind       = "KubeNodeConfig"
       annotations = {
-        "tuppr.home-operations.com/schematic" = var.talos_factory_id
+        "tuppr.home-operations.com/schematic" = talos_image_factory_schematic.pc.id
       }
     },
   ]
@@ -250,9 +265,9 @@ resource "talos_machine_configuration_apply" "controller" {
   node                        = each.value.bootstrap_ip
 
   config_patches = each.value.config_patches
-  depends_on = [
-    proxmox_virtual_environment_vm.talos_node,
-  ]
+  depends_on = each.value.device_type == "vm" ? [
+    proxmox_virtual_environment_vm.talos_node[each.key],
+  ] : []
 }
 
 resource "talos_machine_configuration_apply" "hybrid" {
@@ -264,9 +279,9 @@ resource "talos_machine_configuration_apply" "hybrid" {
   node                        = each.value.bootstrap_ip
 
   config_patches = each.value.config_patches
-  depends_on = [
-    proxmox_virtual_environment_vm.talos_node,
-  ]
+  depends_on = each.value.device_type == "vm" ? [
+    proxmox_virtual_environment_vm.talos_node[each.key],
+  ] : []
 }
 
 resource "talos_machine_configuration_apply" "worker" {
@@ -276,9 +291,9 @@ resource "talos_machine_configuration_apply" "worker" {
   machine_configuration_input = data.talos_machine_configuration.worker.machine_configuration
   endpoint                    = each.value.bootstrap_ip
   node                        = each.value.bootstrap_ip
-  depends_on = [
-    proxmox_virtual_environment_vm.talos_node,
-  ]
+  depends_on = each.value.device_type == "vm" ? [
+    proxmox_virtual_environment_vm.talos_node[each.key],
+  ] : []
   config_patches = each.value.config_patches
 }
 
