@@ -44,9 +44,32 @@ locals {
   ]
   hybrid_config_patch = { machine = { cluster = { allowSchedulingOnControlPlanes = true } } }
 
+  amd64_config_patch = [
+    {
+      apiVersion = "v1alpha1"
+      kind       = "UnattendedInstallConfig"
+      installer = {
+        image = "factory.talos.dev/metal-installer-secureboot/${var.talos_factory_id}:v${var.talos_version}"
+      }
+      provisioning = {
+        diskSelector = {
+          match = "disk.dev_path == \"/dev/sda\""
+        }
+      }
+    },
+    {
+      apiVersion = "v1alpha1"
+      kind       = "KubeNodeConfig"
+      annotations = {
+        "tuppr.home-operations.com/schematic" = var.talos_factory_id
+      }
+    },
+  ]
+
   device_type_config_patches = {
-    rpi = local.rpi_config_patch
-    vm  = local.vm_config_patch
+    rpi   = local.rpi_config_patch
+    vm    = local.vm_config_patch
+    amd64 = local.amd64_config_patch
   }
 }
 locals {

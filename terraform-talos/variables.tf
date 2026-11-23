@@ -1,6 +1,6 @@
 variable "proxmox_pve_node_address" {
   type    = string
-  default = "https://10.30.2.12:8006/api2/json"
+  default = "https://10.30.2.11:8006/api2/json"
 }
 
 variable "proxmox_pve_api_token" {
@@ -80,15 +80,6 @@ variable "vm_node_config" {
   }))
   default = [
     {
-      pve_node_name = "thinknugget"
-      node_type     = "worker"
-      node_id       = 3
-      count         = 1
-      cpu_count     = 6
-      min_ram_gb    = 8
-      max_ram_gb    = 8
-    },
-    {
       pve_node_name = "thinkcentre"
       node_type     = "worker"
       node_id       = 4
@@ -111,7 +102,7 @@ variable "metal_node_config" {
   default = [
     { device_type = "rpi", node_type = "controller", node_id = 0 },
     { device_type = "rpi", node_type = "controller", node_id = 1 },
-    { device_type = "rpi", node_type = "controller", node_id = 2 },
+    { device_type = "amd64", node_type = "hybrid", node_id = 3 },
   ]
 }
 
